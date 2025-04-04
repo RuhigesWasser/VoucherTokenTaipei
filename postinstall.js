@@ -433,7 +433,9 @@ async function writeConfiguration(config) {
     blockchainConfig = blockchainConfig.replace(/web3Key:.*/, `// web3Key:`);
     blockchainConfig = blockchainConfig.replace(/rpcUrl:.*/, `rpcUrl: '${CHAIN_ID_TO_RPC[config.chainID].url}',`);
   }
-  blockchainConfig = blockchainConfig.replace(/deployerPrivateKey:.*/, `deployerPrivateKey: '${config.wallet.privateKey}',`);
+  
+  // 使用占位符替换私钥
+  blockchainConfig = blockchainConfig.replace(/deployerPrivateKey:.*/, `deployerPrivateKey: '0x0000000000000000000000000000000000000000000000000000000000000000', // TODO: Replace with your private key`);
   fs.writeFileSync(blockchainConfigPath, blockchainConfig, 'utf8');
   console.log(`✅ Updated ${blockchainConfigPath}.`);
 
@@ -452,19 +454,21 @@ async function writeConfiguration(config) {
 }
 
 async function setupPrivateDeployerKey(config) {
-  const wallet = Wallet.createRandom();
-  console.log('✅ Generated Ethereum Wallet (Feel free to replace with your own):')
-  console.log(`   Address: ${wallet.address}`);
-  console.log(`   Private Key: ${wallet.privateKey}`);
+  // 提示用户手动编辑部署配置文件
+  console.log('⚠️ IMPORTANT: You will need to manually edit the deployment configuration files:');
+  console.log('1. Edit blockchain/deployment-config.development.js');
+  console.log('2. Replace the deployerPrivateKey with your own private key');
+  console.log('3. Make sure your account has sufficient CELO tokens on Alfajores testnet');
+  console.log('\nYou can get test CELO from the Alfajores faucet:');
+  console.log('https://faucet.celo.org/alfajores\n');
 
-  if (config.chainID === CURVEGRID_PRIVATE_TESTNET_CHAIN_ID) {
-    console.log('  Detected Curvegrid Private Testnet, asking faucet for money...');
-    await callFaucet(config.deploymentURL, config.adminApiKey, wallet.address);
-  } else {
-    console.log('💸 YOU WILL HAVE TO FUND THIS ACCOUNT TO USE IT AS A DEPLOYER.');
-  }
-
-  return { wallet };
+  // 返回一个空的钱包对象，保持接口一致
+  return { 
+    wallet: {
+      address: '<YOUR_ADDRESS>',
+      privateKey: '0x0000000000000000000000000000000000000000000000000000000000000000'
+    } 
+  };
 }
 
 async function runConfig() {
