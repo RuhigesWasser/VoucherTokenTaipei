@@ -12,7 +12,8 @@
     "fix:all": "npm run fix:eslint && npm run fix:sol",
     "test": "npx hardhat test",
     "deploy:voting:dev": "HARDHAT_NETWORK=development npx hardhat run scripts/deploy-mb.ts",
-    "deploy:voting:testing": "HARDHAT_NETWORK=testing npx hardhat run scripts/deploy-mb.ts"
+    "deploy:voting:testing": "HARDHAT_NETWORK=testing npx hardhat run scripts/deploy-mb.ts",
+    "deploy:merchant:dev": "HARDHAT_NETWORK=development npx hardhat run scripts/deploy-merchant-voucher.ts"
   },
   "repository": {
     "type": "git",
@@ -43,5 +44,8 @@
     "prettier-plugin-solidity": "^1.4.2",
     "solhint": "^5.0.4",
     "typescript-eslint": "^8.20.0"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.2.0"
   }
 }
