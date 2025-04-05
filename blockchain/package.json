@@ -11,8 +11,6 @@
     "fix:sol": "npm run fix:prettier && npm run fix:solhint",
     "fix:all": "npm run fix:eslint && npm run fix:sol",
     "test": "npx hardhat test",
-    "deploy:voting:dev": "HARDHAT_NETWORK=development npx hardhat run scripts/deploy-mb.ts",
-    "deploy:voting:testing": "HARDHAT_NETWORK=testing npx hardhat run scripts/deploy-mb.ts",
     "deploy:merchant:dev": "HARDHAT_NETWORK=development npx hardhat run scripts/deploy-merchant-voucher.ts"
   },
   "repository": {
