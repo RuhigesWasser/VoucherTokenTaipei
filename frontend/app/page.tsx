@@ -7,17 +7,26 @@ import MerchantCertification from "./components/MerchantCertification";
 import VoucherManagement from "./components/VoucherManagement";
 import VoucherConsumer from "./components/VoucherConsumer";
 import VoucherEvents from "./components/VoucherEvents";
+import { useTranslation } from "../i18n/client";
+
 
 const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("merchant");
   const [txReceipt, setTxReceipt] = useState<UseWaitForTransactionReceiptReturnType['data']>();
+
+  const { t, i18n } = useTranslation();
+
+  const handleLanguageChange = (lng: string) => {
+    i18n.changeLanguage(lng);
+  };
+
 
   return (
     <div className="min-h-screen bg-white">
       {/* 顶部导航栏 */}
       <header className="bg-white border-b border-gray-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-rose-500">代金券系统</h1>
+          <h1 className="text-xl font-bold text-rose-500" >{t('common:title')}</h1>
           <div className="flex items-center space-x-4">
             <div className="bg-rose-100 text-rose-500 rounded-lg px-3 py-1 flex items-center">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
@@ -26,9 +35,18 @@ const Home: React.FC = () => {
               <span className="font-medium">900</span>
             </div>
             <div className="text-gray-800">
-              <span>×1 代币倍数</span>
+              <span className="font-medium">{t('common:language')}</span>
+              <select 
+                className="ml-2 border border-gray-300 rounded-lg px-2 py-1"
+                onChange={(e) => handleLanguageChange(e.target.value)}
+              >
+                <option value="en">English</option>
+                <option value="hans">简体中文</option>
+                <option value="hant">繁体中文</option>
+                
+              </select>
             </div>
-            <ConnectButton label="连接钱包" />
+            <ConnectButton label={t('common:connect_wallet')} />
           </div>
         </div>
       </header>
