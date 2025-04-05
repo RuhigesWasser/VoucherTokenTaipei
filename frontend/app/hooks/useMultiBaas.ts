@@ -49,6 +49,8 @@ interface MultiBaasHook {
   getChainStatus: () => Promise<{chainID: number, blockNumber: number} | null>;
   merchant: MerchantCertHook;
   voucher: VoucherHook;
+  getDeployer: () => Promise<string | null>;
+  getMerchants: () => Promise<string[]>;
 }
 
 const useMultiBaas = (): MultiBaasHook => {
@@ -223,12 +225,12 @@ const useMultiBaas = (): MultiBaasHook => {
           // Transfer 事件在 ERC721 中用于记录铸造 (_from = 0x0)
           const eventSignature = "Transfer(address,address,uint256)";
           const response = await eventsApi.listEvents(
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            false,
+            undefined, // fromBlock
+            undefined, // toBlock
+            undefined, // fromAddress
+            undefined, // toAddress
+            undefined, // fromTransaction
+            false, // includeInternal
             chain,
             merchantAddressAlias,
             merchantContractLabel,
@@ -520,10 +522,65 @@ const useMultiBaas = (): MultiBaasHook => {
     ),
   };
 
+  const getDeployer = async (): Promise<string | null> => {
+    try {
+      const events = await merchant.getMintEvents(20); // 获取更多事件以确保能找到第一个铸造事件
+      if (events && events.length > 0) {
+        // 查找第一个铸造事件（from 地址为 0x0）
+        const firstMintEvent = events.find(event => 
+          event.event.name === "Transfer" && 
+          event.event.inputs.some(input => 
+            input.name === "from" && 
+            input.value === "0x0000000000000000000000000000000000000000"
+          )
+        );
+        
+        if (firstMintEvent) {
+          return firstMintEvent.transaction.from;
+        }
+      }
+      return null;
+    } catch (error) {
+      console.error("Error getting deployer:", error);
+      return null;
+    }
+  };
+
+  const getMerchants = async (): Promise<string[]> => {
+    try {
+      const events = await merchant.getMintEvents(20); // 获取足够多的事件以确保找到所有商户
+      if (events && events.length > 0) {
+        // 获取所有铸造事件中的 to 地址（商户地址）
+        const merchantAddresses = events
+          .filter(event => 
+            event.event.name === "Transfer" && 
+            event.event.inputs.some(input => 
+              input.name === "from" && 
+              input.value === "0x0000000000000000000000000000000000000000"
+            )
+          )
+          .map(event => {
+            const toInput = event.event.inputs.find(input => input.name === "to");
+            return toInput ? toInput.value : null;
+          })
+          .filter((address): address is string => address !== null);
+
+        // 去重并返回
+        return Array.from(new Set(merchantAddresses));
+      }
+      return [];
+    } catch (error) {
+      console.error("Error getting merchants:", error);
+      return [];
+    }
+  };
+
   return {
     getChainStatus,
     merchant,
     voucher,
+    getDeployer,
+    getMerchants,
   };
 };
 

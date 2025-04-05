@@ -1,25 +1,80 @@
 "use client";
 
 import type { UseWaitForTransactionReceiptReturnType } from "wagmi";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import MerchantCertification from "./components/MerchantCertification";
 import VoucherManagement from "./components/VoucherManagement";
 import VoucherConsumer from "./components/VoucherConsumer";
 import VoucherEvents from "./components/VoucherEvents";
 import { useTranslation } from "../i18n/client";
-
+import useMultiBaas from "./hooks/useMultiBaas";
+import { useAccount } from "wagmi";
 
 const Home: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("merchant");
   const [txReceipt, setTxReceipt] = useState<UseWaitForTransactionReceiptReturnType['data']>();
+  const [isDeployer, setIsDeployer] = useState<boolean>(false);
+  const [isMerchant, setIsMerchant] = useState<boolean>(false);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { address, isConnected } = useAccount();
 
   const { t, i18n } = useTranslation();
+  const { getDeployer, getMerchants } = useMultiBaas();
+
+  useEffect(() => {
+    if (!isConnected && !localStorage.getItem('hasRefreshed')) {
+      localStorage.setItem('hasRefreshed', 'true');
+      window.location.reload();
+    } else if (isConnected) {
+      localStorage.removeItem('hasRefreshed');
+    }
+  }, [isConnected]);
+
+  useEffect(() => {
+    const checkPermissions = async () => {
+      try {
+        const [deployerAddress, merchantAddresses] = await Promise.all([
+          getDeployer(),
+          getMerchants()
+        ]);
+
+        if (address) {
+          // 检查是否是部署者
+          if (deployerAddress && deployerAddress.toLowerCase() === address.toLowerCase()) {
+            setIsDeployer(true);
+          }
+          // 检查是否是商户
+          if (merchantAddresses.some(merchantAddr => merchantAddr.toLowerCase() === address.toLowerCase())) {
+            setIsMerchant(true);
+          }
+        }
+        console.log(isMerchant);
+      } catch (error) {
+        console.error("Error checking permissions:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    if (address) {
+      checkPermissions();
+    } else {
+      setIsLoading(false);
+    }
+  }, [getDeployer, getMerchants, address]);
 
   const handleLanguageChange = (lng: string) => {
     i18n.changeLanguage(lng);
   };
 
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-rose-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-white">
@@ -84,26 +139,30 @@ const Home: React.FC = () => {
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
           <div className="flex -mb-px space-x-8">
-            <button 
-              onClick={() => setActiveTab("merchant")}
-              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                activeTab === "merchant" 
-                  ? "border-rose-500 text-rose-600" 
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              {t('common:merchant_certification')}
-            </button>
-            <button 
-              onClick={() => setActiveTab("voucher")}
-              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
-                activeTab === "voucher" 
-                  ? "border-rose-500 text-rose-600" 
-                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-              }`}
-            >
-              {t('common:voucher_management')}
-            </button>
+            {isDeployer && (
+              <button 
+                onClick={() => setActiveTab("merchant")}
+                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                  activeTab === "merchant" 
+                    ? "border-rose-500 text-rose-600" 
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                {t('common:merchant_certification')}
+              </button>
+            )}
+            {isDeployer && (
+              <button 
+                onClick={() => setActiveTab("voucher")}
+                className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
+                  activeTab === "voucher" 
+                    ? "border-rose-500 text-rose-600" 
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                {t('common:voucher_management')}
+              </button>
+            )}
             <button 
               onClick={() => setActiveTab("consumer")}
               className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
@@ -130,12 +189,12 @@ const Home: React.FC = () => {
 
       {/* 内容区域 */}
       <main className="max-w-7xl mx-auto py-8 px-6">
-        {activeTab === "merchant" && (
+        {activeTab === "merchant" && isDeployer && (
           <div className="animate-fadeIn">
             <MerchantCertification setTxReceipt={setTxReceipt} />
           </div>
         )}
-        {activeTab === "voucher" && (
+        {activeTab === "voucher" && isDeployer && (
           <div className="animate-fadeIn">
             <VoucherManagement setTxReceipt={setTxReceipt} />
           </div>
@@ -147,7 +206,7 @@ const Home: React.FC = () => {
         )}
         {activeTab === "events" && (
           <div className="animate-fadeIn">
-            <VoucherEvents txReceipt={txReceipt} />
+            <VoucherEvents txReceipt={txReceipt} isDeployer={isDeployer} isMerchant={isMerchant} />
           </div>
         )}
       </main>

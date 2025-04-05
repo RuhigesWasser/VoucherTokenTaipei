@@ -8,14 +8,16 @@ import { useTranslation } from "../../i18n/client";
 
 interface VoucherEventsProps {
   txReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined;
+  isDeployer: boolean;
+  isMerchant: boolean;
 }
 
-const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
+const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt, isDeployer, isMerchant }) => {
   const { merchant, voucher } = useMultiBaas();
   const { t } = useTranslation();
   const [events, setEvents] = useState<Event[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
-  const [activeTab, setActiveTab] = useState<string>("全部");
+  const [activeTab, setActiveTab] = useState<string>(t('events:categories:all'));
 
   useEffect(() => {
     setActiveTab(t('events:categories:all'));
@@ -143,18 +145,39 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
     return { displayName, category, bgColor };
   };
 
+  // 过滤事件
+  const filteredEvents = activeTab === t('events:categories:all')
+    ? events.filter(event => {
+        const { category, bgColor } = getEventInfo(event);
+        // 对于非部署者，只显示消费事件（绿色背景）和商户事件（蓝色背景，如果用户是商户）
+        if (!isDeployer) {
+          if (isMerchant) {
+            return bgColor.includes("bg-green-100") || bgColor.includes("bg-blue-100");
+          }
+          return bgColor.includes("bg-green-100");
+        }
+        return true;
+      })
+    : events.filter(event => {
+        const { category, bgColor } = getEventInfo(event);
+        // 对于非部署者，只显示消费事件（绿色背景）和商户事件（蓝色背景，如果用户是商户）
+        if (!isDeployer) {
+          if (isMerchant) {
+            return category === activeTab && (bgColor.includes("bg-green-100") || bgColor.includes("bg-blue-100"));
+          }
+          return category === activeTab && bgColor.includes("bg-green-100");
+        }
+        return category === activeTab;
+      });
+
   // 固定的分类列表
   const FIXED_CATEGORIES = [
     t('events:categories:all'),
-    t('events:categories:merchant'),
+    ...(isDeployer ? [t('events:categories:merchant')] : []),
+    ...(isMerchant ? [t('events:categories:merchant')] : []),
     t('events:categories:voucher'),
     t('events:categories:other')
   ];
-
-  // 过滤事件
-  const filteredEvents = activeTab === t('events:categories:all')
-    ? events 
-    : events.filter(event => getEventInfo(event).category === activeTab);
 
   return (
     <div className="container mx-auto px-4 py-6">
