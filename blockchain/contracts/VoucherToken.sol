@@ -31,6 +31,12 @@ contract VoucherToken is ERC1155, Ownable {
     // 内部映射，用于记录某个地址是否已领取某个 tokenId 的代金券（防止重复领取）
     mapping(uint256 => mapping(address => bool)) private _voucherIssued;
 
+    // 存储每种代金券的每个地址可认领的数量（固定额度）
+    mapping(uint256 => uint256) public claimLimit;
+
+    // 新增状态变量：记录所有可认领代金券的 tokenId 数组
+    uint256[] public claimableTokenIds;
+
     // 商户认证合约引用
     MerchantCertificationToken public merchantCertification;
 
@@ -52,6 +58,13 @@ contract VoucherToken is ERC1155, Ownable {
         address indexed merchant,
         uint256 indexed tokenId,
         uint256 usageAmount
+    );
+
+    // 事件：记录认领操作
+    event VoucherClaimed(
+        uint256 indexed tokenId,
+        address indexed claimer,
+        uint256 amount
     );
 
     /**
@@ -233,5 +246,85 @@ contract VoucherToken is ERC1155, Ownable {
 
         (bool success, ) = to.call{value: amount}("");
         require(success, "Withdraw failed");
+    }
+
+    /// @notice 仅限合约 owner 调用，铸造可被认领的代金券（铸给 owner 账户），同时指定每个地址可认领的固定数量
+    /// @param tokenId 代金券类型ID（必须已定义）
+    /// @param amount 代金券总数量（存于 owner 账户）
+    /// @param _claimLimit 每个地址的认领额度（每个地址只能认领一次，认领数量固定为此额度）
+    /// @param data 附加数据
+    function mintClaimableVoucher(
+        uint256 tokenId,
+        uint256 amount,
+        uint256 _claimLimit,
+        bytes memory data
+    ) external onlyOwner {
+        require(
+            voucherAttributes[tokenId].expiry != 0,
+            "Voucher type not defined"
+        );
+        // 确保同一代金券类型只铸造一次可认领代金券
+        require(
+            claimLimit[tokenId] == 0,
+            "Claimable voucher already minted for this token"
+        );
+        _mint(owner(), tokenId, amount, data);
+        // 记录每个地址可认领的固定数量
+        claimLimit[tokenId] = _claimLimit;
+        // 记录 tokenId 到 claimableTokenIds 数组
+        claimableTokenIds.push(tokenId);
+        emit VoucherMinted(tokenId, owner(), amount);
+    }
+
+    // 定义结构体用于返回可认领代金券信息
+    struct ClaimableVoucherInfo {
+        uint256 tokenId;
+        uint256 claimLimit;
+        uint256 availableAmount;
+    }
+
+    // 新增 view 函数，返回所有可认领代金券信息
+    function getClaimableVouchers()
+        public
+        view
+        returns (ClaimableVoucherInfo[] memory)
+    {
+        ClaimableVoucherInfo[] memory vouchers = new ClaimableVoucherInfo[](
+            claimableTokenIds.length
+        );
+        for (uint256 i = 0; i < claimableTokenIds.length; i++) {
+            uint256 tokenId = claimableTokenIds[i];
+            vouchers[i] = ClaimableVoucherInfo({
+                tokenId: tokenId,
+                claimLimit: claimLimit[tokenId],
+                availableAmount: balanceOf(owner(), tokenId)
+            });
+        }
+        return vouchers;
+    }
+
+    /// @notice 任何人可调用此函数认领 owner 持有的可认领代金券，且每个地址仅能认领一次
+    /// @param tokenId 代金券类型ID
+    /// @param data 附加数据
+    function claimVoucher(uint256 tokenId, bytes memory data) external {
+        // 限制每个地址每个代金券类型只能认领一次
+        require(
+            !_voucherIssued[tokenId][msg.sender],
+            "Voucher already claimed by this address"
+        );
+        uint256 claimAmount = claimLimit[tokenId];
+        require(claimAmount > 0, "Claimable voucher not available");
+        // 检查 owner 持有的可认领代金券数量足够
+        require(
+            balanceOf(owner(), tokenId) >= claimAmount,
+            "Not enough claimable voucher available"
+        );
+
+        // 标记 msg.sender 已认领该代金券
+        _voucherIssued[tokenId][msg.sender] = true;
+        // 将固定额度的代金券从 owner 转移给调用者
+        _safeTransferFrom(owner(), msg.sender, tokenId, claimAmount, data);
+
+        emit VoucherClaimed(tokenId, msg.sender, claimAmount);
     }
 }
