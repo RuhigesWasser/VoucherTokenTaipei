@@ -62,42 +62,75 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
     "代金券": ["VoucherTypeDefined", "VoucherMinted", "VoucherUsed", "VoucherClaimed"],
   };
 
+  // 添加参数名称翻译映射
+  const PARAM_NAME_MAP: { [key: string]: string } = {
+    tokenId: "代金券ID",
+    claimer: "认领地址",
+    amount: "数量",
+    merchant: "商户地址",
+    consumer: "消费者地址",
+    expiry: "过期时间",
+    maxUsage: "最大使用次数",
+    singleUsageLimit: "单次限额",
+    allowedMerchantTypes: "允许商户类型",
+    from: "发送方",
+    to: "接收方",
+    usageAmount: "使用数量"
+  };
+
+  // 添加值格式化函数
+  const formatValue = (name: string, value: any): string => {
+    if (name === "expiry") {
+      return new Date(Number(value) * 1000).toLocaleString();
+    }
+    if (name === "amount" || name === "usageAmount" || name === "singleUsageLimit") {
+      return `${value} wei`;
+    }
+    if (name === "allowedMerchantTypes") {
+      return Array.isArray(value) ? value.join(", ") : String(value);
+    }
+    if (typeof value === "boolean") {
+      return value ? "是" : "否";
+    }
+    return String(value);
+  };
+
   // 获取事件信息
   const getEventInfo = (event: Event) => {
     const name = event.event.name;
     let displayName = name;
     let category = "其他";
+    let bgColor = "bg-gray-100"; // 默认背景色
 
     // 商户认证事件
-    if (name === "Transfer" && event.address === merchant.address) {
+    if (name === "Transfer" && event.event.contract.name === "merchant_certification") {
       displayName = "商户认证授予";
       category = "商户认证";
+      bgColor = "bg-blue-100 text-blue-800 hover:bg-blue-200"; // 蓝色背景
     }
     // 代金券事件
     else if (EVENT_CATEGORIES["代金券"].includes(name)) {
       category = "代金券";
       switch (name) {
         case "VoucherTypeDefined":
-          displayName = "代金券类型定义";
-          break;
         case "VoucherMinted":
-          displayName = "代金券铸造";
+          displayName = name === "VoucherTypeDefined" ? "代金券类型定义" : "代金券铸造";
+          bgColor = "bg-rose-100 text-rose-800 hover:bg-rose-200"; // 红色背景（管理事件）
           break;
         case "VoucherUsed":
-          displayName = "代金券使用";
-          break;
         case "VoucherClaimed":
-          displayName = "代金券认领";
+          displayName = name === "VoucherUsed" ? "代金券使用" : "代金券认领";
+          bgColor = "bg-green-100 text-green-800 hover:bg-green-200"; // 绿色背景（消费事件）
           break;
       }
     }
     // 其他所有事件
     else {
       category = "其他";
-      displayName = name; // 保持原始事件名
+      displayName = name;
     }
 
-    return { displayName, category };
+    return { displayName, category, bgColor };
   };
 
   // 固定的分类列表
@@ -109,63 +142,102 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
     : events.filter(event => getEventInfo(event).category === activeTab);
 
   return (
-    <div className="container">
-      <h1 className="title">Recent Events</h1>
-      <div style={{ marginBottom: '15px' }}>
-        {FIXED_CATEGORIES.map(category => (
-          <button 
-            key={category}
-            onClick={() => setActiveTab(category)} 
-            style={{ 
-              fontWeight: activeTab === category ? 'bold' : 'normal', 
-              marginRight: '10px',
-              padding: '5px 10px',
-              backgroundColor: activeTab === category ? '#e0e0e0' : 'transparent'
-            }}
-          >
-            {category}
-          </button>
-        ))}
-      </div>
-      <button 
-        onClick={fetchEvents} 
-        disabled={isFetching}
-        style={{ marginBottom: '15px' }}
-      >
-        {isFetching ? 'Loading...' : 'Refresh Events'}
-      </button>
-      <div className="spinner-parent">
-        {isFetching && (
-          <div className="overlay">
-            <div className="spinner"></div>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-semibold mb-8">事件记录</h2>
+
+      <div className="card">
+        <div className="card-header">
+          <div className="flex justify-between items-center">
+            <div className="flex flex-wrap space-x-2">
+              {FIXED_CATEGORIES.map(category => (
+                <button 
+                  key={category}
+                  onClick={() => setActiveTab(category)} 
+                  className={`px-4 py-2 rounded-md text-sm font-medium ${
+                    activeTab === category 
+                      ? "bg-gray-900 text-white" 
+                      : "bg-gray-100 text-gray-800 hover:bg-gray-200"
+                  }`}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+            <button 
+              onClick={fetchEvents} 
+              disabled={isFetching}
+              className="btn btn-secondary btn-sm"
+            >
+              {isFetching ? '加载中...' : '刷新事件'}
+            </button>
           </div>
-        )}
-        {!isFetching && filteredEvents.length === 0 ? (
-          <p>No events found.</p>
-        ) : (
-          <ul className="events-list">
-            {filteredEvents.map((event, index) => (
-              <li key={index} className="event-item">
-                <div className="event-name">
-                  <strong>{getEventInfo(event).displayName}</strong> - {event.triggeredAt}
-                </div>
-                <div className="event-details">
-                  {event.event.inputs.map((input, idx) => (
-                    <p key={idx}>
-                      <strong>{input.name}:</strong> {input.value}
-                    </p>
-                  ))}
-                  <p>
-                    <strong>Transaction Hash:</strong> {event.transaction.txHash}
-                  </p>
-                  <p>
-                    <strong>Contract:</strong> {event.address}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        </div>
+        <div className="card-body">
+          <div className="relative">
+            {isFetching && (
+              <div className="absolute inset-0 bg-white bg-opacity-75 flex justify-center items-center z-10 rounded-md">
+                <div className="spinner"></div>
+              </div>
+            )}
+            
+            {!isFetching && filteredEvents.length === 0 ? (
+              <div className="bg-gray-50 rounded-lg p-8 text-center">
+                <p className="text-gray-600">没有找到事件记录</p>
+              </div>
+            ) : (
+              <div className="space-y-4 divide-y divide-gray-100">
+                {filteredEvents.map((event, index) => {
+                  const { displayName, bgColor } = getEventInfo(event);
+                  return (
+                    <div key={index} className="pt-4 first:pt-0">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className={`inline-block px-2.5 py-0.5 rounded-full text-xs font-medium ${bgColor} mb-2`}>
+                            {displayName}
+                          </span>
+                          <p className="text-sm text-gray-500">{event.triggeredAt}</p>
+                        </div>
+                        <span className={`text-xs ${bgColor} rounded px-2 py-1`}>
+                          {event.transaction.txHash.substring(0, 10)}...
+                        </span>
+                      </div>
+                      
+                      <div className="mt-2 bg-gray-50 rounded-md p-3">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                          {event.event.inputs.map((input, idx) => (
+                            <div key={idx} className="overflow-hidden">
+                              <p className="text-xs font-medium text-gray-500 truncate">
+                                {PARAM_NAME_MAP[input.name] || input.name}
+                              </p>
+                              <p className="text-sm truncate">
+                                {formatValue(input.name, input.value)}
+                              </p>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="mt-2 pt-2 border-t border-gray-100">
+                          <p className="text-xs text-gray-500">
+                            合约: <span className="font-mono">{event.event.contract.address}</span>
+                          </p>
+                          <p className="text-xs text-gray-500 mt-1">
+                            交易: <a 
+                              href={`https://explorer.celo.org/mainnet/tx/${event.transaction.txHash}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-500 hover:text-blue-600"
+                            >
+                              {event.transaction.txHash}
+                            </a>
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

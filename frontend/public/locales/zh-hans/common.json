@@ -1,0 +1,23 @@
+{
+    "title": "代金券系统",
+    "tabs": {
+      "merchant": "商户认证",
+      "voucher": "代金券管理",
+      "consumer": "代金券消费",
+      "events": "事件记录"
+    },
+    "actions": {
+      "refresh": "刷新",
+      "loading": "加载中...",
+      "connect": "连接钱包",
+      "claim": "认领",
+      "use": "使用",
+      "mint": "铸造",
+      "deposit": "存入资金"
+    },
+    "messages": {
+      "pleaseConnect": "请连接钱包以继续",
+      "loading": "加载中...",
+      "noData": "暂无数据"
+    }
+  }

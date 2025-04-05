@@ -6,6 +6,11 @@ const nextConfig = {
     config.externals.push('pino-pretty', 'lokijs', 'encoding');
     return config;
   },
+  i18n: {
+    defaultLocale: 'zh-hans',
+    locales: ['zh-hans', 'en'],
+    localeDetection: true
+  },
 };
 
 export default nextConfig;

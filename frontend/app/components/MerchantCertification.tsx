@@ -162,109 +162,153 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
   }, [txReceipt, setTxReceipt]);
   
   return (
-    <div>
-      <h2>商户认证管理</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-semibold mb-8">商户认证管理</h2>
       
       {!isConnected ? (
-        <p>请连接钱包以管理商户认证</p>
+        <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
+          <p className="text-gray-600 mb-4">请连接钱包以管理商户认证</p>
+        </div>
       ) : (
         <>
-          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>创建新认证</h3>
-            <div>
-              <label>
-                商户地址: 
-                <input 
-                  type="text" 
-                  value={merchantAddress} 
-                  onChange={(e) => setMerchantAddress(e.target.value)}
-                  placeholder="留空则使用当前钱包地址" 
-                />
-              </label>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">创建新认证</h3>
+              </div>
+              <div className="card-body space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    商户地址
+                  </label>
+                  <input 
+                    type="text" 
+                    value={merchantAddress} 
+                    onChange={(e) => setMerchantAddress(e.target.value)}
+                    placeholder="留空则使用当前钱包地址" 
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    商户类型ID
+                  </label>
+                  <input 
+                    type="number" 
+                    value={merchantTypeId} 
+                    onChange={(e) => setMerchantTypeId(Number(e.target.value))} 
+                    min="1"
+                    className="w-full"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    有效期(天)
+                  </label>
+                  <input 
+                    type="number" 
+                    value={expirationDays} 
+                    onChange={(e) => setExpirationDays(Number(e.target.value))} 
+                    min="1"
+                    className="w-full"
+                  />
+                </div>
+                <button 
+                  onClick={mintCertification} 
+                  disabled={isLoading || isTxProcessing}
+                  className="btn btn-primary w-full"
+                >
+                  {isLoading || isTxProcessing ? "处理中..." : "创建认证"}
+                </button>
+              </div>
             </div>
-            <div>
-              <label>
-                商户类型ID: 
-                <input 
-                  type="number" 
-                  value={merchantTypeId} 
-                  onChange={(e) => setMerchantTypeId(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
+            
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">查询认证</h3>
+              </div>
+              <div className="card-body">
+                <div className="flex gap-4 mb-4">
+                  <div className="flex-1">
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      认证Token ID
+                    </label>
+                    <input 
+                      type="number" 
+                      value={tokenId} 
+                      onChange={(e) => setTokenId(Number(e.target.value))} 
+                      min="1"
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="flex items-end">
+                    <button 
+                      onClick={() => loadCertifications()}
+                      className="btn btn-secondary"
+                    >
+                      刷新列表
+                    </button>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div>
-              <label>
-                有效期(天): 
-                <input 
-                  type="number" 
-                  value={expirationDays} 
-                  onChange={(e) => setExpirationDays(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <button 
-              onClick={mintCertification} 
-              disabled={isLoading || isTxProcessing}
-            >
-              {isLoading || isTxProcessing ? "处理中..." : "创建认证"}
-            </button>
           </div>
           
-          <div>
-            <h3>查询认证</h3>
-            <div>
-              <label>
-                认证Token ID: 
-                <input 
-                  type="number" 
-                  value={tokenId} 
-                  onChange={(e) => setTokenId(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-              <button onClick={() => loadCertifications()}>刷新列表</button>
+          <div className="card">
+            <div className="card-header flex justify-between items-center">
+              <h3 className="text-lg font-medium">认证列表</h3>
+              <div className="text-sm text-gray-500">
+                {certifications.length} 个认证
+              </div>
             </div>
-          </div>
-          
-          <div>
-            <h3>认证列表</h3>
-            {isLoading ? (
-              <p>加载中...</p>
-            ) : certifications.length === 0 ? (
-              <p>没有找到认证记录</p>
-            ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th>Token ID</th>
-                    <th>商户地址</th>
-                    <th>商户类型</th>
-                    <th>过期时间</th>
-                    <th>操作</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {certifications.map((cert) => (
-                    <tr key={cert.tokenId}>
-                      <td>{cert.tokenId}</td>
-                      <td>{cert.owner}</td>
-                      <td>{cert.merchantType}</td>
-                      <td>{cert.expiry}</td>
-                      <td>
-                        <button 
-                          onClick={() => revokeCertification(cert.tokenId)}
-                          disabled={isLoading || isTxProcessing}
-                        >
-                          撤销
-                        </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+            <div className="card-body">
+              {isLoading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="spinner"></div>
+                </div>
+              ) : certifications.length === 0 ? (
+                <div className="bg-gray-50 rounded-lg p-8 text-center">
+                  <p className="text-gray-600">没有找到认证记录</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead>
+                      <tr>
+                        <th>Token ID</th>
+                        <th>商户地址</th>
+                        <th>商户类型</th>
+                        <th>过期时间</th>
+                        <th>操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {certifications.map((cert) => (
+                        <tr key={cert.tokenId}>
+                          <td className="font-medium">{cert.tokenId}</td>
+                          <td className="text-gray-500 truncate max-w-xs">{cert.owner}</td>
+                          <td>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                              类型 {cert.merchantType}
+                            </span>
+                          </td>
+                          <td>{cert.expiry}</td>
+                          <td>
+                            <button 
+                              onClick={() => revokeCertification(cert.tokenId)}
+                              disabled={isLoading || isTxProcessing}
+                              className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
+                            >
+                              撤销
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}

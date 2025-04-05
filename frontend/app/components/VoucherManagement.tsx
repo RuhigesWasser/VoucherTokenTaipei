@@ -38,7 +38,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
   const [mintTokenId, setMintTokenId] = useState<number>(1);
   const [mintAmount, setMintAmount] = useState<number>(100000000); // 0.1 CELO in wei
   
-  // 在 VoucherManagement 组件中添加新的状态
+  // 可认领代金券的状态
   const [claimableTokenId, setClaimableTokenId] = useState<number>(1);
   const [claimableAmount, setClaimableAmount] = useState<number>(1000000000); // 1 CELO in wei
   const [claimLimit, setClaimLimit] = useState<number>(100000000); // 0.1 CELO in wei
@@ -212,216 +212,292 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
   }, [txReceipt, setTxReceipt]);
   
   return (
-    <div>
-      <h2>代金券管理</h2>
+    <div className="container mx-auto px-4 py-6">
+      <h2 className="text-2xl font-semibold mb-8">代金券管理</h2>
       
       {!isConnected ? (
-        <p>请连接钱包以管理代金券</p>
+        <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
+          <p className="text-gray-600 mb-4">请连接钱包以管理代金券</p>
+        </div>
       ) : (
         <>
-          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>定义新代金券类型</h3>
-            <div>
-              <label>
-                代金券类型ID: 
-                <input 
-                  type="number" 
-                  value={tokenId} 
-                  onChange={(e) => setTokenId(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+            {/* 第一行：左侧 - 定义代金券类型 */}
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">定义新代金券类型</h3>
+              </div>
+              <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "280px" }}>
+                <div className="flex-grow space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        代金券类型ID
+                      </label>
+                      <input 
+                        type="number" 
+                        value={tokenId} 
+                        onChange={(e) => setTokenId(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        有效期(天)
+                      </label>
+                      <input 
+                        type="number" 
+                        value={expirationDays} 
+                        onChange={(e) => setExpirationDays(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        最大使用次数
+                      </label>
+                      <input 
+                        type="number" 
+                        value={maxUsage} 
+                        onChange={(e) => setMaxUsage(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        单次使用限额(wei)
+                      </label>
+                      <input 
+                        type="number" 
+                        value={singleUsageLimit} 
+                        onChange={(e) => setSingleUsageLimit(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      允许的商户类型(逗号分隔)
+                    </label>
+                    <input 
+                      type="text" 
+                      value={allowedMerchantTypes} 
+                      onChange={(e) => setAllowedMerchantTypes(e.target.value)} 
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <button 
+                  onClick={defineVoucherType} 
+                  disabled={isLoading || isTxProcessing}
+                  className="btn btn-primary w-full mt-auto"
+                  style={{ backgroundColor: "#000", color: "#fff" }}
+                >
+                  {isLoading || isTxProcessing ? "处理中..." : "定义代金券类型"}
+                </button>
+              </div>
             </div>
-            <div>
-              <label>
-                有效期(天): 
-                <input 
-                  type="number" 
-                  value={expirationDays} 
-                  onChange={(e) => setExpirationDays(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                最大使用次数: 
-                <input 
-                  type="number" 
-                  value={maxUsage} 
-                  onChange={(e) => setMaxUsage(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                单次使用限额(wei): 
-                <input 
-                  type="number" 
-                  value={singleUsageLimit} 
-                  onChange={(e) => setSingleUsageLimit(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                允许的商户类型(逗号分隔): 
-                <input 
-                  type="text" 
-                  value={allowedMerchantTypes} 
-                  onChange={(e) => setAllowedMerchantTypes(e.target.value)} 
-                />
-              </label>
-            </div>
-            <button 
-              onClick={defineVoucherType} 
-              disabled={isLoading || isTxProcessing}
-            >
-              {isLoading || isTxProcessing ? "处理中..." : "定义代金券类型"}
-            </button>
-          </div>
-          
-          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>铸造代金券</h3>
-            <div>
-              <label>
-                接收地址: 
-                <input 
-                  type="text" 
-                  value={recipientAddress} 
-                  onChange={(e) => setRecipientAddress(e.target.value)}
-                  placeholder="留空则使用当前钱包地址" 
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                代金券类型ID: 
-                <input 
-                  type="number" 
-                  value={mintTokenId} 
-                  onChange={(e) => setMintTokenId(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                金额(wei): 
-                <input 
-                  type="number" 
-                  value={mintAmount} 
-                  onChange={(e) => setMintAmount(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <button 
-              onClick={mintVoucher} 
-              disabled={isLoading || isTxProcessing}
-            >
-              {isLoading || isTxProcessing ? "处理中..." : "铸造代金券"}
-            </button>
-          </div>
-          
-          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>存入资金</h3>
-            <div>
-              <label>
-                金额(wei): 
-                <input 
-                  type="number" 
-                  value={mintAmount} 
-                  onChange={(e) => setMintAmount(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <button 
-              onClick={depositFunds} 
-              disabled={isLoading || isTxProcessing}
-            >
-              {isLoading || isTxProcessing ? "处理中..." : "存入资金"}
-            </button>
-          </div>
-          
-          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
-            <h3>铸造可认领代金券</h3>
-            <div>
-              <label>
-                代金券类型ID: 
-                <input 
-                  type="number" 
-                  value={claimableTokenId} 
-                  onChange={(e) => setClaimableTokenId(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                总数量(wei): 
-                <input 
-                  type="number" 
-                  value={claimableAmount} 
-                  onChange={(e) => setClaimableAmount(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <div>
-              <label>
-                每人可认领数量(wei): 
-                <input 
-                  type="number" 
-                  value={claimLimit} 
-                  onChange={(e) => setClaimLimit(Number(e.target.value))} 
-                  min="1"
-                />
-              </label>
-            </div>
-            <button 
-              onClick={mintClaimableVoucher} 
-              disabled={isLoading || isTxProcessing}
-            >
-              {isLoading || isTxProcessing ? "处理中..." : "铸造可认领代金券"}
-            </button>
-          </div>
-          
-          <div>
-            <h3>代金券类型列表</h3>
-            <button onClick={loadVoucherTypes} disabled={isLoading}>刷新列表</button>
             
-            {isLoading ? (
-              <p>加载中...</p>
-            ) : voucherTypes.length === 0 ? (
-              <p>没有找到代金券类型</p>
-            ) : (
-              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-                <thead>
-                  <tr>
-                    <th>Token ID</th>
-                    <th>过期时间</th>
-                    <th>最大使用次数</th>
-                    <th>单次限额(wei)</th>
-                    <th>允许的商户类型</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {voucherTypes.map((type) => (
-                    <tr key={type.tokenId}>
-                      <td>{type.tokenId}</td>
-                      <td>{type.expiry}</td>
-                      <td>{type.maxUsage}</td>
-                      <td>{type.singleUsageLimit}</td>
-                      <td>{type.allowedMerchantTypes.join(', ')}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            )}
+            {/* 第一行：右侧 - 铸造代金券 */}
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">铸造代金券</h3>
+              </div>
+              <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "280px" }}>
+                <div className="flex-grow space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      接收地址
+                    </label>
+                    <input 
+                      type="text" 
+                      value={recipientAddress} 
+                      onChange={(e) => setRecipientAddress(e.target.value)}
+                      placeholder="留空则使用当前钱包地址" 
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        代金券类型ID
+                      </label>
+                      <input 
+                        type="number" 
+                        value={mintTokenId} 
+                        onChange={(e) => setMintTokenId(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        金额(wei)
+                      </label>
+                      <input 
+                        type="number" 
+                        value={mintAmount} 
+                        onChange={(e) => setMintAmount(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={mintVoucher} 
+                  disabled={isLoading || isTxProcessing}
+                  className="btn btn-primary w-full mt-auto"
+                  style={{ backgroundColor: "#000", color: "#fff" , marginTop: "97px"}}
+                >
+                  {isLoading || isTxProcessing ? "处理中..." : "铸造代金券"}
+                </button>
+              </div>
+            </div>
+            
+            {/* 第二行：左侧 - 存入资金 */}
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">存入资金</h3>
+              </div>
+              <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "180px" }}>
+                <div className="flex-grow space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      金额(wei)
+                    </label>
+                    <input 
+                      type="number" 
+                      value={mintAmount} 
+                      onChange={(e) => setMintAmount(Number(e.target.value))} 
+                      min="1"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+                <button 
+                  onClick={depositFunds} 
+                  disabled={isLoading || isTxProcessing}
+                  className="btn btn-primary w-full mt-auto"
+                  style={{ backgroundColor: "#000", color: "#fff" , marginTop: "97px" }}
+                >
+                  {isLoading || isTxProcessing ? "处理中..." : "存入资金"}
+                </button>
+              </div>
+            </div>
+            
+            {/* 第二行：右侧 - 铸造可认领代金券 */}
+            <div className="card">
+              <div className="card-header">
+                <h3 className="text-lg font-medium">铸造可认领代金券</h3>
+              </div>
+              <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "180px" }}>
+                <div className="flex-grow space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      代金券类型ID
+                    </label>
+                    <input 
+                      type="number" 
+                      value={claimableTokenId} 
+                      onChange={(e) => setClaimableTokenId(Number(e.target.value))} 
+                      min="1"
+                      className="w-full"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        总数量(wei)
+                      </label>
+                      <input 
+                        type="number" 
+                        value={claimableAmount} 
+                        onChange={(e) => setClaimableAmount(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">
+                        每人可认领数量(wei)
+                      </label>
+                      <input 
+                        type="number" 
+                        value={claimLimit} 
+                        onChange={(e) => setClaimLimit(Number(e.target.value))} 
+                        min="1"
+                        className="w-full"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <button 
+                  onClick={mintClaimableVoucher} 
+                  disabled={isLoading || isTxProcessing}
+                  className="btn btn-primary w-full mt-auto"
+                  style={{ backgroundColor: "#000", color: "#fff" }}
+                >
+                  {isLoading || isTxProcessing ? "处理中..." : "铸造可认领代金券"}
+                </button>
+              </div>
+            </div>
+          </div>
+          
+          {/* 代金券类型列表 */}
+          <div className="card">
+            <div className="card-header flex justify-between items-center">
+              <h3 className="text-lg font-medium">代金券类型列表</h3>
+              <button 
+                onClick={loadVoucherTypes} 
+                disabled={isLoading}
+                className="btn btn-secondary btn-sm"
+              >
+                刷新列表
+              </button>
+            </div>
+            <div className="card-body">
+              {isLoading ? (
+                <div className="flex justify-center items-center py-12">
+                  <div className="spinner"></div>
+                </div>
+              ) : voucherTypes.length === 0 ? (
+                <div className="bg-gray-50 rounded-lg p-8 text-center">
+                  <p className="text-gray-600">没有找到代金券类型</p>
+                </div>
+              ) : (
+                <div className="overflow-x-auto">
+                  <table className="min-w-full">
+                    <thead>
+                      <tr>
+                        <th>Token ID</th>
+                        <th>过期时间</th>
+                        <th>最大使用次数</th>
+                        <th>单次限额(wei)</th>
+                        <th>允许的商户类型</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {voucherTypes.map((type) => (
+                        <tr key={type.tokenId} className="hover:bg-gray-50">
+                          <td className="font-medium">{type.tokenId}</td>
+                          <td>{type.expiry}</td>
+                          <td>{type.maxUsage}</td>
+                          <td>{type.singleUsageLimit}</td>
+                          <td>{type.allowedMerchantTypes.join(', ')}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )}
+            </div>
           </div>
         </>
       )}

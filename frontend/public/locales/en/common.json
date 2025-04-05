@@ -1,0 +1,23 @@
+{
+    "title": "Voucher System",
+    "tabs": {
+      "merchant": "Merchant Certification",
+      "voucher": "Voucher Management",
+      "consumer": "Voucher Consumer",
+      "events": "Events"
+    },
+    "actions": {
+      "refresh": "Refresh",
+      "loading": "Loading...",
+      "connect": "Connect Wallet",
+      "claim": "Claim",
+      "use": "Use",
+      "mint": "Mint",
+      "deposit": "Deposit"
+    },
+    "messages": {
+      "pleaseConnect": "Please connect wallet to continue",
+      "loading": "Loading...",
+      "noData": "No data available"
+    }
+  }

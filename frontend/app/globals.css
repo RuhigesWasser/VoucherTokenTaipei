@@ -2,51 +2,175 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer components {
+  /* 搜索图标的蒙版类 */
+  .mask-image-search {
+    mask-image: url('data:image/svg+xml;charset=utf-8,%3Csvg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"%3E%3Cpath stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"%3E%3C/path%3E%3C/svg%3E');
+    mask-size: contain;
+    mask-repeat: no-repeat;
+    mask-position: center;
+  }
+}
+
 body {
-  @apply bg-background text-foreground font-sans;
+  @apply bg-white text-gray-900 font-sans;
 }
 
-.navbar {
-  @apply bg-background text-foreground border-b border-secondary flex justify-between;
-  @apply items-center px-8 py-4 shadow-[0_2px_4px_rgba(0,0,0,0.05)];
-}
-
-.app-title {
-  @apply text-2xl font-bold;
-}
-
+/* 基础布局样式 */
 .container {
-  @apply max-w-[640px] my-8 mx-auto p-4 bg-white rounded-2xl shadow-[0_2px_4px_rgba(0,0,0,0.1)];
+  @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
 }
 
-.title {
-  @apply text-foreground text-xl mb-4 text-center;
+/* 导航栏 */
+.navbar {
+  @apply bg-white border-b border-gray-200 flex justify-between items-center px-6 py-4;
 }
 
-.spinner-parent {
-  @apply relative;
+.nav-link {
+  @apply px-3 py-2 text-gray-600 hover:text-gray-900 font-medium;
 }
 
-.vote-button {
-  @apply block w-full py-2.5 px-5 my-[5px] text-white border-none rounded-md transition duration-300 hover:translate-y-[-2px];
+.nav-link-active {
+  @apply border-b-2 border-gray-900 text-gray-900;
+}
+
+/* 按钮样式 */
+.btn {
+  @apply px-4 py-2 rounded-md font-medium transition-colors duration-200;
+}
+
+.btn-primary {
+  @apply bg-black text-white hover:bg-gray-800;
+}
+
+.btn-secondary {
+  @apply bg-gray-100 text-gray-800 hover:bg-gray-200;
+}
+
+.btn-danger {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+.btn-sm {
+  @apply px-3 py-1 text-sm;
+}
+
+/* 输入框样式 */
+input, select, textarea {
+  @apply block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm;
+  @apply focus:outline-none focus:ring-2 focus:ring-gray-200 focus:border-transparent;
+}
+
+/* 表格样式 */
+table {
+  @apply min-w-full divide-y divide-gray-200;
+}
+
+thead {
+  @apply bg-gray-50;
+}
+
+th {
+  @apply px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider;
+}
+
+tbody {
+  @apply bg-white divide-y divide-gray-200;
+}
+
+td {
+  @apply px-6 py-4 whitespace-nowrap text-sm text-gray-500;
+}
+
+/* 卡片样式 */
+.card {
+  @apply bg-white shadow rounded-lg overflow-hidden;
+}
+
+.card-header {
+  @apply px-6 py-4 border-b border-gray-200;
+}
+
+.card-body {
+  @apply p-6;
+}
+
+/* 加载动画 */
+.spinner {
+  @apply w-8 h-8 border-4 border-gray-200 border-t-black rounded-full animate-spin;
 }
 
 .overlay {
-  @apply absolute top-0 left-0 right-0 bottom-0 bg-white bg-opacity-75 flex justify-center items-center rounded-lg;
+  @apply fixed inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50;
 }
 
-.spinner {
-  @apply w-10 h-10 border-[5px] border-gray-900/10 border-t-accent rounded-full animate-spinner;
+/* 表单区域 */
+.form-section {
+  @apply bg-white rounded-lg shadow-sm p-6 mb-6 border border-gray-100;
 }
 
-.events-list {
-  @apply p-0 list-none;
+.form-section h3 {
+  @apply text-lg font-medium mb-4;
 }
 
-.event-item {
-  @apply p-2.5 mb-2.5 border-b border-[#ddd];
+/* 特别组件样式 */
+.token-count {
+  @apply bg-rose-100 text-rose-500 rounded-lg px-3 py-1 flex items-center;
 }
 
-.event-item:last-child {
-  @apply border-none;
+.search-box {
+  @apply relative;
+}
+
+.search-box input {
+  @apply pl-10;
+}
+
+.search-box::before {
+  content: "";
+  @apply absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 bg-gray-400 mask-image-search;
+}
+
+/* 修改原组件样式 */
+.merchant-card {
+  @apply bg-white rounded-lg shadow-sm p-6 border border-gray-200 flex flex-col h-full;
+}
+
+.merchant-card-header {
+  @apply text-lg font-medium mb-2;
+}
+
+.merchant-card-description {
+  @apply text-gray-600 mb-4 text-sm;
+}
+
+.merchant-card-footer {
+  @apply mt-auto;
+}
+
+/* 状态指示器 */
+.badge {
+  @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+}
+
+.badge-success {
+  @apply bg-green-100 text-green-800;
+}
+
+.badge-warning {
+  @apply bg-yellow-100 text-yellow-800;
+}
+
+.badge-danger {
+  @apply bg-red-100 text-red-800;
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-in-out;
 }
