@@ -1,0 +1,42 @@
+{
+    "title": "事件记录",
+    "categories": {
+      "all": "全部",
+      "merchant": "商户认证",
+      "voucher": "代金券",
+      "other": "其他"
+    },
+    "eventTypes": {
+      "VoucherTypeDefined": "代金券类型定义",
+      "VoucherMinted": "代金券铸造",
+      "VoucherUsed": "代金券使用",
+      "VoucherClaimed": "代金券认领",
+      "Transfer": "商户认证授予"
+    },
+    "fields": {
+      "contract": "合约",
+      "transaction": "交易",
+      "time": "时间",
+      "tokenId": "代金券ID",
+      "claimer": "认领地址",
+      "amount": "数量",
+      "merchant": "商户地址",
+      "consumer": "消费者地址",
+      "expiry": "过期时间",
+      "maxUsage": "最大使用次数",
+      "singleUsageLimit": "单次限额",
+      "allowedMerchantTypes": "允许商户类型",
+      "from": "发送方",
+      "to": "接收方",
+      "usageAmount": "使用数量"
+    },
+    "messages": {
+      "noEvents": "没有找到事件记录",
+      "refresh": "刷新事件"
+    },
+    "units": {
+      "wei": "wei",
+      "yes": "是",
+      "no": "否"
+    }
+  }

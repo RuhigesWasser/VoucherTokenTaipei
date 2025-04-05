@@ -1,0 +1,50 @@
+{
+  "title": "代金券消费",
+  "useVoucher": {
+    "title": "使用代金券",
+    "tokenId": "代金券类型ID",
+    "amount": "使用金额(wei)",
+    "merchantAddress": "商户地址",
+    "merchantCertId": "商户认证Token ID",
+    "confirm": "确认使用",
+    "cancel": "取消"
+  },
+  "claimVoucher": {
+    "title": "可认领代金券",
+    "columns": {
+      "tokenId": "Token ID",
+      "claimLimit": "可认领数量(wei)",
+      "availableAmount": "剩余可认领总量(wei)",
+      "actions": "操作"
+    },
+    "actions": {
+      "claim": "认领",
+      "refresh": "刷新列表"
+    }
+  },
+  "myVouchers": {
+    "title": "我的代金券",
+    "columns": {
+      "tokenId": "Token ID",
+      "balance": "余额(wei)",
+      "usedCount": "已使用次数",
+      "actions": "操作"
+    },
+    "actions": {
+      "use": "使用代金券",
+      "refresh": "刷新列表"
+    }
+  },
+  "messages": {
+    "connectWallet": "请连接钱包以使用代金券",
+    "processing": "处理中...",
+    "noVouchers": "没有找到代金券",
+    "useSuccess": "代金券使用成功: TokenID {{tokenId}}, 金额 {{amount}} wei",
+    "claimSuccess": "代金券认领成功：TokenID {{tokenId}}",
+    "errors": {
+      "invalidMerchant": "错误: 商户地址不匹配该认证Token",
+      "expiredCert": "错误: 商户认证已过期",
+      "invalidCert": "错误: 无效的商户认证Token"
+    }
+  }
+}

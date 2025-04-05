@@ -1,0 +1,35 @@
+{
+  "title": "商户认证管理",
+  "form": {
+    "merchantType": "商户类型",
+    "expirationDays": "有效期(天)",
+    "recipientAddress": "接收地址",
+    "merchantTypeId": "商户类型ID",
+    "certificationTokenId": "认证Token ID"
+  },
+  "actions": {
+    "mint": "铸造认证",
+    "revoke": "撤销认证",
+    "refresh": "刷新列表"
+  },
+  "messages": {
+    "mintSuccess": "认证铸造成功",
+    "revokeSuccess": "认证撤销成功",
+    "processing": "处理中...",
+    "connectWallet": "请连接钱包以管理商户认证"
+  },
+  "table": {
+    "columns": {
+      "tokenId": "Token ID",
+      "merchantAddress": "商户地址",
+      "merchantType": "商户类型",
+      "expiry": "过期时间",
+      "actions": "操作"
+    },
+    "empty": "没有找到认证记录",
+    "count": "个认证"
+  },
+  "placeholder": {
+    "useCurrentAddress": "留空则使用当前钱包地址"
+  }
+}

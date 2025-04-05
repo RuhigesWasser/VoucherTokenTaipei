@@ -1,0 +1,13 @@
+{
+  "title": "代金券详情",
+  "id": "ID",
+  "fields": {
+    "expiry": "过期时间",
+    "maxUsage": "最大使用次数",
+    "singleUsageLimit": "单次限额",
+    "allowedMerchantTypes": "允许商户类型"
+  },
+  "units": {
+    "wei": "wei"
+  }
+}

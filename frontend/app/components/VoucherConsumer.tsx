@@ -5,6 +5,7 @@ import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wa
 import useMultiBaas from "../hooks/useMultiBaas";
 import type { UseWaitForTransactionReceiptReturnType } from "wagmi";
 import VoucherTooltip from "./VoucherTooltip";
+import { useTranslation } from "../../i18n/client";
 
 interface UserVoucher {
   tokenId: number;
@@ -268,6 +269,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   const getVoucherTypeInfo = (tokenId: number) => {
     return voucherTypes.find(type => type.tokenId === tokenId);
   };
+  const { t } = useTranslation();
   
   // 修改初始加载的 useEffect
   useEffect(() => {
@@ -287,11 +289,11 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-semibold mb-8">代金券消费</h2>
+      <h2 className="text-2xl font-semibold mb-8">{t("consumer:title")}</h2>
       
       {!isConnected ? (
         <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
-          <p className="text-gray-600 mb-4">请连接钱包以使用代金券</p>
+          <p className="text-gray-600 mb-4">{t("consumer:messages:connectWallet")}</p>
         </div>
       ) : (
         <div className="flex flex-row space-x-4">
@@ -299,13 +301,13 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
           <div className="w-1/2">
             <div className="card mb-8" style={{ height: 'calc(100vh - 150px)', overflow: 'auto' }}>
               <div className="card-header flex justify-between items-center">
-                <h3 className="text-lg font-medium">可认领代金券</h3>
+                <h3 className="text-lg font-medium">{t("consumer:claimVoucher:title")}</h3>
                 <button 
                   onClick={loadClaimableVouchers} 
                   disabled={isLoading}
                   className="btn btn-secondary btn-sm"
                 >
-                  刷新列表
+                  {t("consumer:actions:refresh")}
                 </button>
               </div>
               <div className="card-body">

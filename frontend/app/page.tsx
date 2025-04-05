@@ -35,7 +35,7 @@ const Home: React.FC = () => {
               <span className="font-medium">900</span>
             </div>
             <div className="text-gray-800">
-              <span className="font-medium">{t('common:language')}</span>
+              <span className="font-medium">Language</span>
               <select 
                 className="ml-2 border border-gray-300 rounded-lg px-2 py-1"
                 onChange={(e) => handleLanguageChange(e.target.value)}
@@ -63,7 +63,7 @@ const Home: React.FC = () => {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              商户认证
+              {t('common:merchant_certification')}
             </button>
             <button 
               onClick={() => setActiveTab("voucher")}
@@ -73,7 +73,7 @@ const Home: React.FC = () => {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              代金券管理
+              {t('common:voucher_management')}
             </button>
             <button 
               onClick={() => setActiveTab("consumer")}
@@ -83,7 +83,7 @@ const Home: React.FC = () => {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              代金券消费
+              {t('common:voucher_consumption')}
             </button>
             <button 
               onClick={() => setActiveTab("events")}
@@ -93,7 +93,7 @@ const Home: React.FC = () => {
                   : "text-gray-500 hover:text-gray-700"
               }`}
             >
-              事件记录
+              {t('common:event_records')}
             </button>
           </div>
         </div>
