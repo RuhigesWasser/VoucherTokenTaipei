@@ -11,6 +11,12 @@ interface UserVoucher {
   usedCount: number;
 }
 
+interface ClaimableVoucher {
+  tokenId: number;
+  claimLimit: number;
+  availableAmount: number;
+}
+
 interface VoucherConsumerProps {
   setTxReceipt: (receipt: UseWaitForTransactionReceiptReturnType['data']) => void;
 }
@@ -29,6 +35,9 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   const [useAmount, setUseAmount] = useState<number>(10000000); // 0.01 CELO
   const [merchantAddress, setMerchantAddress] = useState<string>("");
   const [merchantCertId, setMerchantCertId] = useState<number>(1);
+  
+  // 添加可认领代金券的状态
+  const [claimableVouchers, setClaimableVouchers] = useState<ClaimableVoucher[]>([]);
   
   const { data: txReceipt, isLoading: isTxProcessing } = useWaitForTransactionReceipt({ hash: txHash });
   
@@ -92,6 +101,23 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
     }
   };
   
+  // 加载可认领的代金券列表
+  const loadClaimableVouchers = async () => {
+    if (!isConnected) return;
+    
+    try {
+      setIsLoading(true);
+      const vouchers = await voucher.getClaimableVouchers();
+      if (vouchers) {
+        setClaimableVouchers(vouchers);
+      }
+    } catch (error) {
+      console.error("Error loading claimable vouchers:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
   // 使用代金券
   const useVoucher = async () => {
     if (!isConnected || !address) return;
@@ -143,10 +169,34 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
     }
   };
   
-  // 初始加载及钱包连接后加载数据
+  // 认领代金券
+  const claimVoucher = async (tokenId: number) => {
+    if (!isConnected) return;
+    
+    try {
+      setIsLoading(true);
+      const tx = await voucher.claimVoucher(tokenId);
+      
+      const hash = await sendTransactionAsync(tx);
+      setTxHash(hash);
+      
+      setTimeout(() => {
+        loadClaimableVouchers();
+        loadUserVouchers();
+        setIsLoading(false);
+        alert(`代金券认领成功：TokenID ${tokenId}`);
+      }, 5000);
+    } catch (error) {
+      console.error("Error claiming voucher:", error);
+      setIsLoading(false);
+    }
+  };
+  
+  // 修改初始加载的 useEffect
   useEffect(() => {
     if (isConnected && address) {
       loadUserVouchers();
+      loadClaimableVouchers(); // 添加加载可认领代金券
     }
   }, [isConnected, address]);
   
@@ -165,6 +215,52 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
         <p>请连接钱包以使用代金券</p>
       ) : (
         <>
+          {/* 添加可认领代金券部分 */}
+          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
+            <h3>可认领代金券</h3>
+            <button 
+              onClick={loadClaimableVouchers} 
+              disabled={isLoading}
+              style={{ marginBottom: '15px' }}
+            >
+              刷新列表
+            </button>
+            
+            {isLoading ? (
+              <p>加载中...</p>
+            ) : claimableVouchers.length === 0 ? (
+              <p>当前没有可认领的代金券</p>
+            ) : (
+              <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr>
+                    <th>Token ID</th>
+                    <th>可认领数量(wei)</th>
+                    <th>剩余可认领总量(wei)</th>
+                    <th>操作</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {claimableVouchers.map((voucher) => (
+                    <tr key={voucher.tokenId}>
+                      <td>{voucher.tokenId}</td>
+                      <td>{voucher.claimLimit}</td>
+                      <td>{voucher.availableAmount}</td>
+                      <td>
+                        <button
+                          onClick={() => claimVoucher(voucher.tokenId)}
+                          disabled={isLoading || isTxProcessing}
+                        >
+                          认领
+                        </button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            )}
+          </div>
+          
           <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
             <h3>使用代金券</h3>
             <div>

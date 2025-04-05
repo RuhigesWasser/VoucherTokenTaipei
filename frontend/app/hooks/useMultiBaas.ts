@@ -32,9 +32,17 @@ interface VoucherHook {
   voucherAttributes: (tokenId: number) => Promise<any | null>;
   balanceOf: (owner: string, tokenId: number) => Promise<number | null>;
   consumptionCount: (user: string, tokenId: number) => Promise<number | null>;
+  mintClaimableVoucher: (tokenId: number, amount: number, claimLimit: number) => Promise<SendTransactionParameters>;
+  getClaimableVouchers: () => Promise<Array<{
+    tokenId: number;
+    claimLimit: number;
+    availableAmount: number;
+  }> | null>;
+  claimVoucher: (tokenId: number) => Promise<SendTransactionParameters>;
   getVoucherDefinedEvents: (limit?: number) => Promise<Array<Event> | null>;
   getVoucherMintedEvents: (limit?: number) => Promise<Array<Event> | null>;
   getVoucherUsedEvents: (limit?: number) => Promise<Array<Event> | null>;
+  getVoucherClaimedEvents: (limit?: number) => Promise<Array<Event> | null>;
 }
 
 interface MultiBaasHook {
@@ -432,6 +440,79 @@ const useMultiBaas = (): MultiBaasHook => {
           return response.data.result;
         } catch (err) {
           console.error("Error getting voucher used events:", err);
+          return null;
+        }
+      },
+      [eventsApi, chain, voucherAddressAlias, voucherContractLabel]
+    ),
+
+    // 新增方法实现
+    mintClaimableVoucher: useCallback(
+      async (tokenId: number, amount: number, claimLimit: number): Promise<SendTransactionParameters> => {
+        return await callContractFunction(
+          voucherContractLabel,
+          voucherAddressAlias,
+          "mintClaimableVoucher",
+          [tokenId, amount, claimLimit, "0x"]
+        );
+      },
+      [callContractFunction, voucherContractLabel, voucherAddressAlias]
+    ),
+
+    getClaimableVouchers: useCallback(
+      async () => {
+        try {
+          const result = await callContractFunction(
+            voucherContractLabel,
+            voucherAddressAlias,
+            "getClaimableVouchers",
+            []
+          );
+          return result as Array<{
+            tokenId: number;
+            claimLimit: number;
+            availableAmount: number;
+          }>;
+        } catch (err) {
+          console.error("Error getting claimable vouchers:", err);
+          return null;
+        }
+      },
+      [callContractFunction, voucherContractLabel, voucherAddressAlias]
+    ),
+
+    claimVoucher: useCallback(
+      async (tokenId: number): Promise<SendTransactionParameters> => {
+        return await callContractFunction(
+          voucherContractLabel,
+          voucherAddressAlias,
+          "claimVoucher",
+          [tokenId, "0x"]
+        );
+      },
+      [callContractFunction, voucherContractLabel, voucherAddressAlias]
+    ),
+
+    getVoucherClaimedEvents: useCallback(
+      async (limit = 50): Promise<Array<Event> | null> => {
+        try {
+          const eventSignature = "VoucherClaimed(uint256,address,uint256)";
+          const response = await eventsApi.listEvents(
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            undefined,
+            false,
+            chain,
+            voucherAddressAlias,
+            voucherContractLabel,
+            eventSignature,
+            limit
+          );
+          return response.data.result;
+        } catch (err) {
+          console.error("Error getting voucher claimed events:", err);
           return null;
         }
       },

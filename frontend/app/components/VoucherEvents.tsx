@@ -18,18 +18,26 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
   const fetchEvents = async () => {
     setIsFetching(true);
     try {
-      const [merchantEvents, definedEvents, mintedEvents, usedEvents] = await Promise.all([
+      const [
+        merchantEvents, 
+        definedEvents, 
+        mintedEvents, 
+        usedEvents,
+        claimedEvents
+      ] = await Promise.all([
         merchant.getMintEvents(20),
         voucher.getVoucherDefinedEvents(20),
         voucher.getVoucherMintedEvents(20),
-        voucher.getVoucherUsedEvents(20)
+        voucher.getVoucherUsedEvents(20),
+        voucher.getVoucherClaimedEvents(20)
       ]);
 
       const allEvents: Event[] = [
         ...(merchantEvents || []),
         ...(definedEvents || []),
         ...(mintedEvents || []),
-        ...(usedEvents || [])
+        ...(usedEvents || []),
+        ...(claimedEvents || [])
       ];
 
       allEvents.sort((a, b) => 
@@ -51,7 +59,7 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
   // 事件分类定义
   const EVENT_CATEGORIES = {
     "商户认证": ["Transfer"],
-    "代金券": ["VoucherTypeDefined", "VoucherMinted", "VoucherUsed"],
+    "代金券": ["VoucherTypeDefined", "VoucherMinted", "VoucherUsed", "VoucherClaimed"],
   };
 
   // 获取事件信息
@@ -77,6 +85,9 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
           break;
         case "VoucherUsed":
           displayName = "代金券使用";
+          break;
+        case "VoucherClaimed":
+          displayName = "代金券认领";
           break;
       }
     }

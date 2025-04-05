@@ -38,6 +38,11 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
   const [mintTokenId, setMintTokenId] = useState<number>(1);
   const [mintAmount, setMintAmount] = useState<number>(100000000); // 0.1 CELO in wei
   
+  // 在 VoucherManagement 组件中添加新的状态
+  const [claimableTokenId, setClaimableTokenId] = useState<number>(1);
+  const [claimableAmount, setClaimableAmount] = useState<number>(1000000000); // 1 CELO in wei
+  const [claimLimit, setClaimLimit] = useState<number>(100000000); // 0.1 CELO in wei
+  
   const { data: txReceipt, isLoading: isTxProcessing } = useWaitForTransactionReceipt({ hash: txHash });
   
   // 加载代金券类型
@@ -163,6 +168,31 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
       }, 5000);
     } catch (error) {
       console.error("Error depositing funds:", error);
+      setIsLoading(false);
+    }
+  };
+  
+  // 添加铸造可认领代金券的函数
+  const mintClaimableVoucher = async () => {
+    if (!isConnected) return;
+    
+    try {
+      setIsLoading(true);
+      const tx = await voucher.mintClaimableVoucher(
+        claimableTokenId,
+        claimableAmount,
+        claimLimit
+      );
+      
+      const hash = await sendTransactionAsync(tx);
+      setTxHash(hash);
+      
+      setTimeout(() => {
+        setIsLoading(false);
+        alert(`可认领代金券铸造成功：TokenID ${claimableTokenId}`);
+      }, 5000);
+    } catch (error) {
+      console.error("Error minting claimable voucher:", error);
       setIsLoading(false);
     }
   };
@@ -314,6 +344,49 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
               disabled={isLoading || isTxProcessing}
             >
               {isLoading || isTxProcessing ? "处理中..." : "存入资金"}
+            </button>
+          </div>
+          
+          <div style={{ margin: '20px 0', border: '1px solid #ccc', padding: '15px' }}>
+            <h3>铸造可认领代金券</h3>
+            <div>
+              <label>
+                代金券类型ID: 
+                <input 
+                  type="number" 
+                  value={claimableTokenId} 
+                  onChange={(e) => setClaimableTokenId(Number(e.target.value))} 
+                  min="1"
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                总数量(wei): 
+                <input 
+                  type="number" 
+                  value={claimableAmount} 
+                  onChange={(e) => setClaimableAmount(Number(e.target.value))} 
+                  min="1"
+                />
+              </label>
+            </div>
+            <div>
+              <label>
+                每人可认领数量(wei): 
+                <input 
+                  type="number" 
+                  value={claimLimit} 
+                  onChange={(e) => setClaimLimit(Number(e.target.value))} 
+                  min="1"
+                />
+              </label>
+            </div>
+            <button 
+              onClick={mintClaimableVoucher} 
+              disabled={isLoading || isTxProcessing}
+            >
+              {isLoading || isTxProcessing ? "处理中..." : "铸造可认领代金券"}
             </button>
           </div>
           
