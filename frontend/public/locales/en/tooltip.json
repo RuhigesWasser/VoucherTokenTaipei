@@ -1,0 +1,13 @@
+{
+  "title": "Voucher Details",
+  "id": "ID",
+  "fields": {
+    "expiry": "Expiry",
+    "maxUsage": "Max Usage Count",
+    "singleUsageLimit": "Single Usage Limit",
+    "allowedMerchantTypes": "Allowed Merchant Types"
+  },
+  "units": {
+    "wei": "wei"
+  }
+}

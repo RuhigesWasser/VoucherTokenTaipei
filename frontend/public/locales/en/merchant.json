@@ -1,0 +1,35 @@
+{
+    "title": "Merchant Certification",
+    "form": {
+      "merchantType": "Merchant Type",
+      "expirationDays": "Expiration (Days)",
+      "recipientAddress": "Recipient Address",
+      "merchantTypeId": "Merchant Type ID",
+      "certificationTokenId": "Certification Token ID"
+    },
+    "actions": {
+      "mint": "Mint Certification",
+      "revoke": "Revoke",
+      "refresh": "Refresh List"
+    },
+    "messages": {
+      "mintSuccess": "Certification minted successfully",
+      "revokeSuccess": "Certification revoked successfully",
+      "processing": "Processing...",
+      "connectWallet": "Please connect wallet to manage merchant certification"
+    },
+    "table": {
+      "columns": {
+        "tokenId": "Token ID",
+        "merchantAddress": "Merchant Address",
+        "merchantType": "Merchant Type",
+        "expiry": "Expiry",
+        "actions": "Actions"
+      },
+      "empty": "No certification records found",
+      "count": "certifications"
+    },
+    "placeholder": {
+      "useCurrentAddress": "Leave blank to use current wallet address"
+    }
+  }

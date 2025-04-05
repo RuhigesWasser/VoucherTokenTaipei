@@ -1,23 +1,18 @@
 {
-    "title": "代金券系统",
-    "tabs": {
-      "merchant": "商户认证",
-      "voucher": "代金券管理",
-      "consumer": "代金券消费",
-      "events": "事件记录"
-    },
-    "actions": {
-      "refresh": "刷新",
-      "loading": "加载中...",
-      "connect": "连接钱包",
-      "claim": "认领",
-      "use": "使用",
-      "mint": "铸造",
-      "deposit": "存入资金"
-    },
-    "messages": {
-      "pleaseConnect": "请连接钱包以继续",
-      "loading": "加载中...",
-      "noData": "暂无数据"
-    }
-  }
+  "title": "代金券系统",
+  "token_multiplier": "×{{value}} 代币倍数",
+  "connect_wallet": "连接钱包",
+  "merchant_certification": "商户认证",
+  "voucher_management": "代金券管理",
+  "voucher_consumption": "代金券消费",
+  "event_records": "事件记录",
+  "disconnect": "断开连接",
+  "connected_with": "已连接到",
+  "wrong_network": "错误的网络",
+  "switch_network": "切换网络",
+  "copy_address": "复制地址",
+  "address_copied": "地址已复制",
+  "transaction_pending": "交易处理中",
+  "transaction_confirmed": "交易已确认",
+  "transaction_failed": "交易失败"
+}

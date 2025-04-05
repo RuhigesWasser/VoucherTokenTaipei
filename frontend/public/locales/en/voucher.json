@@ -1,0 +1,55 @@
+{
+  "title": "Voucher Management",
+  "defineVoucher": {
+    "title": "Define New Voucher Type",
+    "tokenId": "Voucher Type ID",
+    "expirationDays": "Expiration (Days)",
+    "maxUsage": "Max Usage Count",
+    "singleUsageLimit": "Single Usage Limit (wei)",
+    "allowedMerchantTypes": "Allowed Merchant Types (comma-separated)",
+    "submit": "Define Voucher Type"
+  },
+  "mintVoucher": {
+    "title": "Mint Voucher",
+    "recipientAddress": "Recipient Address",
+    "tokenId": "Voucher Type ID",
+    "amount": "Amount (wei)",
+    "submit": "Mint Voucher",
+    "placeholder": {
+      "useCurrentAddress": "Leave blank to use current wallet address"
+    }
+  },
+  "claimableVoucher": {
+    "title": "Mint Claimable Voucher",
+    "tokenId": "Voucher Type ID",
+    "totalAmount": "Total Amount (wei)",
+    "claimLimit": "Claim Limit per Person (wei)",
+    "submit": "Mint Claimable Voucher"
+  },
+  "deposit": {
+    "title": "Deposit Funds",
+    "amount": "Amount (wei)",
+    "submit": "Deposit Funds"
+  },
+  "voucherList": {
+    "title": "Voucher Type List",
+    "columns": {
+      "tokenId": "Token ID",
+      "expiry": "Expiry",
+      "maxUsage": "Max Usage",
+      "singleUsageLimit": "Single Limit (wei)",
+      "allowedMerchantTypes": "Allowed Merchant Types"
+    },
+    "actions": {
+      "refresh": "Refresh List"
+    },
+    "empty": "No voucher types found"
+  },
+  "messages": {
+    "connectWallet": "Please connect wallet to manage vouchers",
+    "processing": "Processing...",
+    "mintSuccess": "Voucher minted successfully: TokenID {{tokenId}}, Amount {{amount}} wei",
+    "depositSuccess": "Funds deposited successfully: {{amount}} wei",
+    "claimableMintSuccess": "Claimable voucher minted successfully: TokenID {{tokenId}}"
+  }
+}

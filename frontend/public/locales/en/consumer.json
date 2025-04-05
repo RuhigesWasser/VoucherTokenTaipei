@@ -1,0 +1,50 @@
+{
+    "title": "Voucher Consumer",
+    "useVoucher": {
+      "title": "Use Voucher",
+      "tokenId": "Voucher Type ID",
+      "amount": "Amount (wei)",
+      "merchantAddress": "Merchant Address",
+      "merchantCertId": "Merchant Certification Token ID",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "claimVoucher": {
+      "title": "Claimable Vouchers",
+      "columns": {
+        "tokenId": "Token ID",
+        "claimLimit": "Claim Limit (wei)",
+        "availableAmount": "Available Amount (wei)",
+        "actions": "Actions"
+      },
+      "actions": {
+        "claim": "Claim",
+        "refresh": "Refresh List"
+      }
+    },
+    "myVouchers": {
+      "title": "My Vouchers",
+      "columns": {
+        "tokenId": "Token ID",
+        "balance": "Balance (wei)",
+        "usedCount": "Used Count",
+        "actions": "Actions"
+      },
+      "actions": {
+        "use": "Use Voucher",
+        "refresh": "Refresh List"
+      }
+    },
+    "messages": {
+      "connectWallet": "Please connect wallet to use vouchers",
+      "processing": "Processing...",
+      "noVouchers": "No vouchers found",
+      "useSuccess": "Voucher used successfully: TokenID {{tokenId}}, Amount {{amount}} wei",
+      "claimSuccess": "Voucher claimed successfully: TokenID {{tokenId}}",
+      "errors": {
+        "invalidMerchant": "Error: Merchant address does not match certification token",
+        "expiredCert": "Error: Merchant certification has expired",
+        "invalidCert": "Error: Invalid merchant certification token"
+      }
+    }
+  }

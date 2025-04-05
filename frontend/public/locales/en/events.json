@@ -1,0 +1,42 @@
+{
+  "title": "Event Records",
+  "categories": {
+    "all": "All",
+    "merchant": "Merchant Certification",
+    "voucher": "Voucher",
+    "other": "Other"
+  },
+  "eventTypes": {
+    "VoucherTypeDefined": "Voucher Type Defined",
+    "VoucherMinted": "Voucher Minted",
+    "VoucherUsed": "Voucher Used",
+    "VoucherClaimed": "Voucher Claimed",
+    "Transfer": "Merchant Certification Granted"
+  },
+  "fields": {
+    "contract": "Contract",
+    "transaction": "Transaction",
+    "time": "Time",
+    "tokenId": "Token ID",
+    "claimer": "Claimer Address",
+    "amount": "Amount",
+    "merchant": "Merchant Address",
+    "consumer": "Consumer Address",
+    "expiry": "Expiry",
+    "maxUsage": "Max Usage",
+    "singleUsageLimit": "Single Usage Limit",
+    "allowedMerchantTypes": "Allowed Merchant Types",
+    "from": "From",
+    "to": "To",
+    "usageAmount": "Usage Amount"
+  },
+  "messages": {
+    "noEvents": "No events found",
+    "refresh": "Refresh Events"
+  },
+  "units": {
+    "wei": "wei",
+    "yes": "Yes",
+    "no": "No"
+  }
+}

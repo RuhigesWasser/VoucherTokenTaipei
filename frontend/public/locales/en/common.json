@@ -4,7 +4,7 @@
       "merchant": "Merchant Certification",
       "voucher": "Voucher Management",
       "consumer": "Voucher Consumer",
-      "events": "Events"
+      "events": "Event Records"
     },
     "actions": {
       "refresh": "Refresh",
@@ -13,11 +13,38 @@
       "claim": "Claim",
       "use": "Use",
       "mint": "Mint",
-      "deposit": "Deposit"
+      "deposit": "Deposit",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "status": {
+      "processing": "Processing...",
+      "loading": "Loading..."
+    },
+    "units": {
+      "wei": "wei",
+      "days": "days"
     },
     "messages": {
       "pleaseConnect": "Please connect wallet to continue",
       "loading": "Loading...",
-      "noData": "No data available"
-    }
+      "noData": "No data available",
+      "connectWallet": "Please connect wallet"
+    },
+    "token_multiplier": "×{{value}} Token Multiplier",
+    "welcome": "Welcome to Voucher Token Taipei",
+    "connect_wallet": "Connect Wallet",
+    "disconnect": "Disconnect",
+    "connected_with": "Connected with",
+    "wrong_network": "Wrong Network",
+    "switch_network": "Switch Network",
+    "copy_address": "Copy Address",
+    "address_copied": "Address Copied",
+    "transaction_pending": "Transaction Pending",
+    "transaction_confirmed": "Transaction Confirmed",
+    "transaction_failed": "Transaction Failed",
+    "merchant_certification": "Merchant Certification",
+    "voucher_management": "Voucher Management",
+    "voucher_consumption": "Voucher Consumption",
+    "event_records": "Event Records"
   }

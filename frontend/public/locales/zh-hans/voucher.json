@@ -1,0 +1,55 @@
+{
+  "title": "代金券管理",
+  "defineVoucher": {
+    "title": "定义新代金券类型",
+    "tokenId": "代金券类型ID",
+    "expirationDays": "有效期(天)",
+    "maxUsage": "最大使用次数",
+    "singleUsageLimit": "单次使用限额(wei)",
+    "allowedMerchantTypes": "允许的商户类型(逗号分隔)",
+    "submit": "定义代金券类型"
+  },
+  "mintVoucher": {
+    "title": "铸造代金券",
+    "recipientAddress": "接收地址",
+    "tokenId": "代金券类型ID",
+    "amount": "金额(wei)",
+    "submit": "铸造代金券",
+    "placeholder": {
+      "useCurrentAddress": "留空则使用当前钱包地址"
+    }
+  },
+  "claimableVoucher": {
+    "title": "铸造可认领代金券",
+    "tokenId": "代金券类型ID",
+    "totalAmount": "总数量(wei)",
+    "claimLimit": "每人可认领数量(wei)",
+    "submit": "铸造可认领代金券"
+  },
+  "deposit": {
+    "title": "存入资金",
+    "amount": "金额(wei)",
+    "submit": "存入资金"
+  },
+  "voucherList": {
+    "title": "代金券类型列表",
+    "columns": {
+      "tokenId": "Token ID",
+      "expiry": "过期时间",
+      "maxUsage": "最大使用次数",
+      "singleUsageLimit": "单次限额(wei)",
+      "allowedMerchantTypes": "允许的商户类型"
+    },
+    "actions": {
+      "refresh": "刷新列表"
+    },
+    "empty": "没有找到代金券类型"
+  },
+  "messages": {
+    "connectWallet": "请连接钱包以管理代金券",
+    "processing": "处理中...",
+    "mintSuccess": "代金券铸造成功：TokenID {{tokenId}}, 金额 {{amount}} wei",
+    "depositSuccess": "存入资金成功: {{amount}} wei",
+    "claimableMintSuccess": "可认领代金券铸造成功：TokenID {{tokenId}}"
+  }
+}
