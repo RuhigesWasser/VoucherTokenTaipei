@@ -32,7 +32,8 @@
   },
   "messages": {
     "noEvents": "No events found",
-    "refresh": "Refresh Events"
+    "refresh": "Refresh Events",
+    "processing": "Processing..."
   },
   "units": {
     "wei": "wei",

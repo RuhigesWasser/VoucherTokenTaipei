@@ -30,6 +30,24 @@ const config: HardhatUserConfig = {
       url: web3Url,
       accounts: [deployerPrivateKey],
     },
+    'celo-mainnet': {
+      url: 'https://forno.celo.org',
+    },
+  },
+  etherscan: {
+    apiKey: {
+      'celo-mainnet': 'empty',
+    },
+    customChains: [
+      {
+        network: 'celo-mainnet',
+        chainId: 42220,
+        urls: {
+          apiURL: 'https://celo.blockscout.com/api',
+          browserURL: 'https://celo.blockscout.com',
+        },
+      },
+    ],
   },
   mbConfig: {
     apiKey: adminApiKey,

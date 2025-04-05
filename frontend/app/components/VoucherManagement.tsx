@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import useMultiBaas from "../hooks/useMultiBaas";
 import type { UseWaitForTransactionReceiptReturnType } from "wagmi";
+import { useTranslation } from "../../i18n/client";
 
 interface VoucherType {
   tokenId: number;
@@ -21,6 +22,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
   const { voucher } = useMultiBaas();
   const { address, isConnected } = useAccount();
   const { sendTransactionAsync } = useSendTransaction();
+  const { t } = useTranslation();
   
   const [voucherTypes, setVoucherTypes] = useState<VoucherType[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -213,11 +215,11 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
   
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-semibold mb-8">代金券管理</h2>
+      <h2 className="text-2xl font-semibold mb-8">{t('voucher:title')}</h2>
       
       {!isConnected ? (
         <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
-          <p className="text-gray-600 mb-4">请连接钱包以管理代金券</p>
+          <p className="text-gray-600 mb-4">{t('voucher:messages:connectWallet')}</p>
         </div>
       ) : (
         <>
@@ -225,14 +227,14 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
             {/* 第一行：左侧 - 定义代金券类型 */}
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">定义新代金券类型</h3>
+                <h3 className="text-lg font-medium">{t('voucher:defineVoucher:title')}</h3>
               </div>
               <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "280px" }}>
                 <div className="flex-grow space-y-4">
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        代金券类型ID
+                        {t('voucher:defineVoucher:tokenId')}
                       </label>
                       <input 
                         type="number" 
@@ -244,7 +246,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        有效期(天)
+                        {t('voucher:defineVoucher:expirationDays')}
                       </label>
                       <input 
                         type="number" 
@@ -258,7 +260,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        最大使用次数
+                        {t('voucher:defineVoucher:maxUsage')}
                       </label>
                       <input 
                         type="number" 
@@ -270,7 +272,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        单次使用限额(wei)
+                        {t('voucher:defineVoucher:singleUsageLimit')}
                       </label>
                       <input 
                         type="number" 
@@ -283,7 +285,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      允许的商户类型(逗号分隔)
+                      {t('voucher:defineVoucher:allowedMerchantTypes')}
                     </label>
                     <input 
                       type="text" 
@@ -299,7 +301,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   className="btn btn-primary w-full mt-auto"
                   style={{ backgroundColor: "#000", color: "#fff" }}
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "定义代金券类型"}
+                  {isLoading || isTxProcessing ? t('voucher:messages:processing') : t('voucher:defineVoucher:submit')}
                 </button>
               </div>
             </div>
@@ -307,26 +309,26 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
             {/* 第一行：右侧 - 铸造代金券 */}
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">铸造代金券</h3>
+                <h3 className="text-lg font-medium">{t('voucher:mintVoucher:title')}</h3>
               </div>
               <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "280px" }}>
                 <div className="flex-grow space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      接收地址
+                      {t('voucher:mintVoucher:recipientAddress')}
                     </label>
                     <input 
                       type="text" 
                       value={recipientAddress} 
                       onChange={(e) => setRecipientAddress(e.target.value)}
-                      placeholder="留空则使用当前钱包地址" 
+                      placeholder={t('voucher:mintVoucher:placeholder:useCurrentAddress')} 
                       className="w-full"
                     />
                   </div>
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        代金券类型ID
+                        {t('voucher:mintVoucher:tokenId')}
                       </label>
                       <input 
                         type="number" 
@@ -338,7 +340,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        金额(wei)
+                        {t('voucher:mintVoucher:amount')}
                       </label>
                       <input 
                         type="number" 
@@ -356,7 +358,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   className="btn btn-primary w-full mt-auto"
                   style={{ backgroundColor: "#000", color: "#fff" , marginTop: "97px"}}
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "铸造代金券"}
+                  {isLoading || isTxProcessing ? t('voucher:messages:processing') : t('voucher:mintVoucher:submit')}
                 </button>
               </div>
             </div>
@@ -364,13 +366,13 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
             {/* 第二行：左侧 - 存入资金 */}
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">存入资金</h3>
+                <h3 className="text-lg font-medium">{t('voucher:deposit:title')}</h3>
               </div>
               <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "180px" }}>
                 <div className="flex-grow space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      金额(wei)
+                      {t('voucher:deposit:amount')}
                     </label>
                     <input 
                       type="number" 
@@ -387,7 +389,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   className="btn btn-primary w-full mt-auto"
                   style={{ backgroundColor: "#000", color: "#fff" , marginTop: "97px" }}
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "存入资金"}
+                  {isLoading || isTxProcessing ? t('voucher:messages:processing') : t('voucher:deposit:submit')}
                 </button>
               </div>
             </div>
@@ -395,13 +397,13 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
             {/* 第二行：右侧 - 铸造可认领代金券 */}
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">铸造可认领代金券</h3>
+                <h3 className="text-lg font-medium">{t('voucher:claimableVoucher:title')}</h3>
               </div>
               <div className="card-body space-y-4 flex flex-col" style={{ minHeight: "180px" }}>
                 <div className="flex-grow space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      代金券类型ID
+                      {t('voucher:claimableVoucher:tokenId')}
                     </label>
                     <input 
                       type="number" 
@@ -414,7 +416,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        总数量(wei)
+                        {t('voucher:claimableVoucher:totalAmount')}
                       </label>
                       <input 
                         type="number" 
@@ -426,7 +428,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-1">
-                        每人可认领数量(wei)
+                        {t('voucher:claimableVoucher:claimLimit')}
                       </label>
                       <input 
                         type="number" 
@@ -444,7 +446,7 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                   className="btn btn-primary w-full mt-auto"
                   style={{ backgroundColor: "#000", color: "#fff" }}
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "铸造可认领代金券"}
+                  {isLoading || isTxProcessing ? t('voucher:messages:processing') : t('voucher:claimableVoucher:submit')}
                 </button>
               </div>
             </div>
@@ -453,13 +455,13 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
           {/* 代金券类型列表 */}
           <div className="card">
             <div className="card-header flex justify-between items-center">
-              <h3 className="text-lg font-medium">代金券类型列表</h3>
+              <h3 className="text-lg font-medium">{t('voucher:voucherList:title')}</h3>
               <button 
                 onClick={loadVoucherTypes} 
                 disabled={isLoading}
                 className="btn btn-secondary btn-sm"
               >
-                刷新列表
+                {t('voucher:voucherList:actions:refresh')}
               </button>
             </div>
             <div className="card-body">
@@ -469,18 +471,18 @@ const VoucherManagement: React.FC<VoucherManagementProps> = ({ setTxReceipt }) =
                 </div>
               ) : voucherTypes.length === 0 ? (
                 <div className="bg-gray-50 rounded-lg p-8 text-center">
-                  <p className="text-gray-600">没有找到代金券类型</p>
+                  <p className="text-gray-600">{t('voucher:voucherList:empty')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th>Token ID</th>
-                        <th>过期时间</th>
-                        <th>最大使用次数</th>
-                        <th>单次限额(wei)</th>
-                        <th>允许的商户类型</th>
+                        <th>{t('voucher:voucherList:columns:tokenId')}</th>
+                        <th>{t('voucher:voucherList:columns:expiry')}</th>
+                        <th>{t('voucher:voucherList:columns:maxUsage')}</th>
+                        <th>{t('voucher:voucherList:columns:singleUsageLimit')}</th>
+                        <th>{t('voucher:voucherList:columns:allowedMerchantTypes')}</th>
                       </tr>
                     </thead>
                     <tbody>

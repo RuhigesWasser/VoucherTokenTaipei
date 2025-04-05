@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 import useMultiBaas from "../hooks/useMultiBaas";
 import type { UseWaitForTransactionReceiptReturnType } from "wagmi";
+import { useTranslation } from "../../i18n/client";
 
 interface MerchantCert {
   tokenId: number;
@@ -20,6 +21,7 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
   const { merchant } = useMultiBaas();
   const { address, isConnected } = useAccount();
   const { sendTransactionAsync } = useSendTransaction();
+  const { t } = useTranslation();
   
   const [merchantAddress, setMerchantAddress] = useState<string>("");
   const [merchantTypeId, setMerchantTypeId] = useState<number>(1);
@@ -163,35 +165,35 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
   
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-semibold mb-8">商户认证管理</h2>
+      <h2 className="text-2xl font-semibold mb-8">{t('merchant:title')}</h2>
       
       {!isConnected ? (
         <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
-          <p className="text-gray-600 mb-4">请连接钱包以管理商户认证</p>
+          <p className="text-gray-600 mb-4">{t('merchant:messages:connectWallet')}</p>
         </div>
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">创建新认证</h3>
+                <h3 className="text-lg font-medium">{t('merchant:form:merchantType')}</h3>
               </div>
               <div className="card-body space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    商户地址
+                    {t('merchant:form:recipientAddress')}
                   </label>
                   <input 
                     type="text" 
                     value={merchantAddress} 
                     onChange={(e) => setMerchantAddress(e.target.value)}
-                    placeholder="留空则使用当前钱包地址" 
+                    placeholder={t('merchant:placeholder:useCurrentAddress')} 
                     className="w-full"
                   />
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    商户类型ID
+                    {t('merchant:form:merchantTypeId')}
                   </label>
                   <input 
                     type="number" 
@@ -203,7 +205,7 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    有效期(天)
+                    {t('merchant:form:expirationDays')}
                   </label>
                   <input 
                     type="number" 
@@ -218,20 +220,20 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                   disabled={isLoading || isTxProcessing}
                   className="btn btn-primary w-full"
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "创建认证"}
+                  {isLoading || isTxProcessing ? t('merchant:messages:processing') : t('merchant:actions:mint')}
                 </button>
               </div>
             </div>
             
             <div className="card">
               <div className="card-header">
-                <h3 className="text-lg font-medium">查询认证</h3>
+                <h3 className="text-lg font-medium">{t('merchant:form:certificationTokenId')}</h3>
               </div>
               <div className="card-body">
                 <div className="flex gap-4 mb-4">
                   <div className="flex-1">
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      认证Token ID
+                      {t('merchant:form:certificationTokenId')}
                     </label>
                     <input 
                       type="number" 
@@ -246,7 +248,7 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                       onClick={() => loadCertifications()}
                       className="btn btn-secondary"
                     >
-                      刷新列表
+                      {t('merchant:actions:refresh')}
                     </button>
                   </div>
                 </div>
@@ -256,9 +258,9 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
           
           <div className="card">
             <div className="card-header flex justify-between items-center">
-              <h3 className="text-lg font-medium">认证列表</h3>
+              <h3 className="text-lg font-medium">{t('merchant:table:columns:tokenId')}</h3>
               <div className="text-sm text-gray-500">
-                {certifications.length} 个认证
+                {certifications.length} {t('merchant:table:count')}
               </div>
             </div>
             <div className="card-body">
@@ -268,18 +270,18 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                 </div>
               ) : certifications.length === 0 ? (
                 <div className="bg-gray-50 rounded-lg p-8 text-center">
-                  <p className="text-gray-600">没有找到认证记录</p>
+                  <p className="text-gray-600">{t('merchant:table:empty')}</p>
                 </div>
               ) : (
                 <div className="overflow-x-auto">
                   <table className="min-w-full">
                     <thead>
                       <tr>
-                        <th>Token ID</th>
-                        <th>商户地址</th>
-                        <th>商户类型</th>
-                        <th>过期时间</th>
-                        <th>操作</th>
+                        <th>{t('merchant:table:columns:tokenId')}</th>
+                        <th>{t('merchant:table:columns:merchantAddress')}</th>
+                        <th>{t('merchant:table:columns:merchantType')}</th>
+                        <th>{t('merchant:table:columns:expiry')}</th>
+                        <th>{t('merchant:table:columns:actions')}</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -289,7 +291,7 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                           <td className="text-gray-500 truncate max-w-xs">{cert.owner}</td>
                           <td>
                             <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
-                              类型 {cert.merchantType}
+                              {t('merchant:form:merchantType')} {cert.merchantType}
                             </span>
                           </td>
                           <td>{cert.expiry}</td>
@@ -299,7 +301,7 @@ const MerchantCertification: React.FC<MerchantCertificationProps> = ({ setTxRece
                               disabled={isLoading || isTxProcessing}
                               className="inline-flex items-center px-3 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700"
                             >
-                              撤销
+                              {t('merchant:actions:revoke')}
                             </button>
                           </td>
                         </tr>

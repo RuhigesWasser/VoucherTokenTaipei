@@ -1,35 +1,35 @@
 {
-  "title": "商户认证管理",
+  "title": "商戶認證管理",
   "form": {
-    "merchantType": "商户类型",
+    "merchantType": "商戶類型",
     "expirationDays": "有效期(天)",
     "recipientAddress": "接收地址",
-    "merchantTypeId": "商户类型ID",
-    "certificationTokenId": "认证Token ID"
+    "merchantTypeId": "商戶類型ID",
+    "certificationTokenId": "認證Token ID"
   },
   "actions": {
-    "mint": "铸造认证",
-    "revoke": "撤销认证",
+    "mint": "鑄造認證",
+    "revoke": "撤銷認證",
     "refresh": "刷新列表"
   },
   "messages": {
-    "mintSuccess": "认证铸造成功",
-    "revokeSuccess": "认证撤销成功",
-    "processing": "处理中...",
-    "connectWallet": "请连接钱包以管理商户认证"
+    "mintSuccess": "認證鑄造成功",
+    "revokeSuccess": "認證撤銷成功",
+    "processing": "處理中...",
+    "connectWallet": "請連接錢包以管理商戶認證"
   },
   "table": {
     "columns": {
       "tokenId": "Token ID",
-      "merchantAddress": "商户地址",
-      "merchantType": "商户类型",
-      "expiry": "过期时间",
+      "merchantAddress": "商戶地址",
+      "merchantType": "商戶類型",
+      "expiry": "過期時間",
       "actions": "操作"
     },
-    "empty": "没有找到认证记录",
-    "count": "个认证"
+    "empty": "沒有找到認證記錄",
+    "count": "個認證"
   },
   "placeholder": {
-    "useCurrentAddress": "留空则使用当前钱包地址"
+    "useCurrentAddress": "留空則使用當前錢包地址"
   }
 }

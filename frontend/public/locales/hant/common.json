@@ -1,3 +1,18 @@
 {
-  "title": "代金券系統"
+  "title": "代金券系統",
+  "token_multiplier": "×{{value}} 代幣倍數",
+  "connect_wallet": "連接錢包",
+  "merchant_certification": "商戶認證",
+  "voucher_management": "代金券管理",
+  "voucher_consumption": "代金券消費",
+  "event_records": "事件記錄",
+  "disconnect": "斷開連接",
+  "connected_with": "已連接到",
+  "wrong_network": "錯誤的網絡",
+  "switch_network": "切換網絡",
+  "copy_address": "複製地址",
+  "address_copied": "地址已複製",
+  "transaction_pending": "交易處理中",
+  "transaction_confirmed": "交易已確認",
+  "transaction_failed": "交易失敗"
 }

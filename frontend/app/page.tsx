@@ -26,27 +26,56 @@ const Home: React.FC = () => {
       {/* 顶部导航栏 */}
       <header className="bg-white border-b border-gray-200 py-4 px-6">
         <div className="max-w-7xl mx-auto flex justify-between items-center">
-          <h1 className="text-xl font-bold text-rose-500" >{t('common:title')}</h1>
           <div className="flex items-center space-x-4">
-            <div className="bg-rose-100 text-rose-500 rounded-lg px-3 py-1 flex items-center">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 mr-1" viewBox="0 0 20 20" fill="currentColor">
+            <h1 className="text-2xl font-bold bg-gradient-to-r from-rose-500 to-rose-600 bg-clip-text text-transparent">
+              {t('common:title')}
+            </h1>
+            <div className="hidden md:flex items-center space-x-2 bg-rose-50 text-rose-600 rounded-full px-4 py-1.5">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 2a8 8 0 100 16 8 8 0 000-16zm0 14a6 6 0 110-12 6 6 0 010 12z" clipRule="evenodd" />
               </svg>
-              <span className="font-medium">900</span>
+              <span className="font-medium">v25.4.6</span>
             </div>
-            <div className="text-gray-800">
-              <span className="font-medium">Language</span>
-              <select 
-                className="ml-2 border border-gray-300 rounded-lg px-2 py-1"
-                onChange={(e) => handleLanguageChange(e.target.value)}
+          </div>
+          <div className="flex items-center space-x-6">
+            <div className="flex items-center space-x-1 bg-gray-100 rounded-lg p-1">
+              <button
+                onClick={() => handleLanguageChange("en")}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors duration-200 ${
+                  i18n.language === "en"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
               >
-                <option value="en">English</option>
-                <option value="hans">简体中文</option>
-                <option value="hant">繁体中文</option>
-                
-              </select>
+                EN
+              </button>
+              <button
+                onClick={() => handleLanguageChange("hans")}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors duration-200 ${
+                  i18n.language === "hans"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                简
+              </button>
+              <button
+                onClick={() => handleLanguageChange("hant")}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors duration-200 ${
+                  i18n.language === "hant"
+                    ? "bg-white text-gray-900 shadow-sm"
+                    : "text-gray-500 hover:text-gray-700"
+                }`}
+              >
+                繁
+              </button>
             </div>
-            <ConnectButton label={t('common:connect_wallet')} />
+            <ConnectButton 
+              label={t('common:connect_wallet')}
+              showBalance={false}
+              accountStatus="address"
+              chainStatus="none"
+            />
           </div>
         </div>
       </header>
@@ -54,43 +83,43 @@ const Home: React.FC = () => {
       {/* 主导航菜单 */}
       <nav className="bg-white border-b border-gray-200">
         <div className="max-w-7xl mx-auto px-6">
-          <div className="flex -mb-px">
+          <div className="flex -mb-px space-x-8">
             <button 
               onClick={() => setActiveTab("merchant")}
-              className={`py-4 px-6 font-medium focus:outline-none ${
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
                 activeTab === "merchant" 
-                  ? "border-b-2 border-gray-900 text-gray-900" 
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "border-rose-500 text-rose-600" 
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               {t('common:merchant_certification')}
             </button>
             <button 
               onClick={() => setActiveTab("voucher")}
-              className={`py-4 px-6 font-medium focus:outline-none ${
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
                 activeTab === "voucher" 
-                  ? "border-b-2 border-gray-900 text-gray-900" 
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "border-rose-500 text-rose-600" 
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               {t('common:voucher_management')}
             </button>
             <button 
               onClick={() => setActiveTab("consumer")}
-              className={`py-4 px-6 font-medium focus:outline-none ${
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
                 activeTab === "consumer" 
-                  ? "border-b-2 border-gray-900 text-gray-900" 
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "border-rose-500 text-rose-600" 
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               {t('common:voucher_consumption')}
             </button>
             <button 
               onClick={() => setActiveTab("events")}
-              className={`py-4 px-6 font-medium focus:outline-none ${
+              className={`py-4 px-1 font-medium text-sm border-b-2 transition-colors duration-200 ${
                 activeTab === "events" 
-                  ? "border-b-2 border-gray-900 text-gray-900" 
-                  : "text-gray-500 hover:text-gray-700"
+                  ? "border-rose-500 text-rose-600" 
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
               }`}
             >
               {t('common:event_records')}

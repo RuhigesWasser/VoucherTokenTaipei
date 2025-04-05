@@ -1,24 +1,24 @@
 {
-  "title": "代金券消费",
+  "title": "代金券消費",
   "useVoucher": {
     "title": "使用代金券",
-    "tokenId": "代金券类型ID",
-    "amount": "使用金额(wei)",
-    "merchantAddress": "商户地址",
-    "merchantCertId": "商户认证Token ID",
-    "confirm": "确认使用",
+    "tokenId": "代金券類型ID",
+    "amount": "使用金額(wei)",
+    "merchantAddress": "商戶地址",
+    "merchantCertId": "商戶認證Token ID",
+    "confirm": "確認使用",
     "cancel": "取消"
   },
   "claimVoucher": {
-    "title": "可认领代金券",
+    "title": "可認領代金券",
     "columns": {
       "tokenId": "Token ID",
-      "claimLimit": "可认领数量(wei)",
-      "availableAmount": "剩余可认领总量(wei)",
+      "claimLimit": "可認領數量(wei)",
+      "availableAmount": "剩餘可認領總量(wei)",
       "actions": "操作"
     },
     "actions": {
-      "claim": "认领",
+      "claim": "認領",
       "refresh": "刷新列表"
     }
   },
@@ -26,8 +26,8 @@
     "title": "我的代金券",
     "columns": {
       "tokenId": "Token ID",
-      "balance": "余额(wei)",
-      "usedCount": "已使用次数",
+      "balance": "餘額(wei)",
+      "usedCount": "已使用次數",
       "actions": "操作"
     },
     "actions": {
@@ -36,15 +36,15 @@
     }
   },
   "messages": {
-    "connectWallet": "请连接钱包以使用代金券",
-    "processing": "处理中...",
-    "noVouchers": "没有找到代金券",
-    "useSuccess": "代金券使用成功: TokenID {{tokenId}}, 金额 {{amount}} wei",
-    "claimSuccess": "代金券认领成功：TokenID {{tokenId}}",
+    "connectWallet": "請連接錢包以使用代金券",
+    "processing": "處理中...",
+    "noVouchers": "沒有找到代金券",
+    "useSuccess": "代金券使用成功: TokenID {{tokenId}}, 金額 {{amount}} wei",
+    "claimSuccess": "代金券認領成功：TokenID {{tokenId}}",
     "errors": {
-      "invalidMerchant": "错误: 商户地址不匹配该认证Token",
-      "expiredCert": "错误: 商户认证已过期",
-      "invalidCert": "错误: 无效的商户认证Token"
+      "invalidMerchant": "錯誤: 商戶地址不匹配該認證Token",
+      "expiredCert": "錯誤: 商戶認證已過期",
+      "invalidCert": "錯誤: 無效的商戶認證Token"
     }
   }
 }

@@ -4,6 +4,7 @@ import type { UseWaitForTransactionReceiptReturnType } from "wagmi";
 import React, { useEffect, useState } from "react";
 import useMultiBaas from "../hooks/useMultiBaas";
 import type { Event } from "@curvegrid/multibaas-sdk";
+import { useTranslation } from "../../i18n/client";
 
 interface VoucherEventsProps {
   txReceipt: UseWaitForTransactionReceiptReturnType['data'] | undefined;
@@ -11,9 +12,14 @@ interface VoucherEventsProps {
 
 const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
   const { merchant, voucher } = useMultiBaas();
+  const { t } = useTranslation();
   const [events, setEvents] = useState<Event[]>([]);
   const [isFetching, setIsFetching] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<string>("全部");
+
+  useEffect(() => {
+    setActiveTab(t('events:categories:all'));
+  }, [t]);
 
   const fetchEvents = async () => {
     setIsFetching(true);
@@ -58,24 +64,24 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
 
   // 事件分类定义
   const EVENT_CATEGORIES = {
-    "商户认证": ["Transfer"],
-    "代金券": ["VoucherTypeDefined", "VoucherMinted", "VoucherUsed", "VoucherClaimed"],
+    [t('events:categories:merchant')]: ["Transfer"],
+    [t('events:categories:voucher')]: ["VoucherTypeDefined", "VoucherMinted", "VoucherUsed", "VoucherClaimed"],
   };
 
   // 添加参数名称翻译映射
   const PARAM_NAME_MAP: { [key: string]: string } = {
-    tokenId: "代金券ID",
-    claimer: "认领地址",
-    amount: "数量",
-    merchant: "商户地址",
-    consumer: "消费者地址",
-    expiry: "过期时间",
-    maxUsage: "最大使用次数",
-    singleUsageLimit: "单次限额",
-    allowedMerchantTypes: "允许商户类型",
-    from: "发送方",
-    to: "接收方",
-    usageAmount: "使用数量"
+    tokenId: t('events:fields:tokenId'),
+    claimer: t('events:fields:claimer'),
+    amount: t('events:fields:amount'),
+    merchant: t('events:fields:merchant'),
+    consumer: t('events:fields:consumer'),
+    expiry: t('events:fields:expiry'),
+    maxUsage: t('events:fields:maxUsage'),
+    singleUsageLimit: t('events:fields:singleUsageLimit'),
+    allowedMerchantTypes: t('events:fields:allowedMerchantTypes'),
+    from: t('events:fields:from'),
+    to: t('events:fields:to'),
+    usageAmount: t('events:fields:usageAmount')
   };
 
   // 添加值格式化函数
@@ -99,34 +105,38 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
   const getEventInfo = (event: Event) => {
     const name = event.event.name;
     let displayName = name;
-    let category = "其他";
+    let category = t('events:categories:other');
     let bgColor = "bg-gray-100"; // 默认背景色
 
     // 商户认证事件
-    if (name === "Transfer" && event.event.contract.name === "merchant_certification") {
-      displayName = "商户认证授予";
-      category = "商户认证";
+    if (name === "Transfer" && event.event.contract.name === "MerchantCertificationToken") {
+      displayName = t('events:eventTypes:Transfer');
+      category = t('events:categories:merchant');
       bgColor = "bg-blue-100 text-blue-800 hover:bg-blue-200"; // 蓝色背景
     }
     // 代金券事件
-    else if (EVENT_CATEGORIES["代金券"].includes(name)) {
-      category = "代金券";
+    else if (EVENT_CATEGORIES[t('events:categories:voucher')].includes(name)) {
+      category = t('events:categories:voucher');
       switch (name) {
         case "VoucherTypeDefined":
         case "VoucherMinted":
-          displayName = name === "VoucherTypeDefined" ? "代金券类型定义" : "代金券铸造";
+          displayName = name === "VoucherTypeDefined" 
+            ? t('events:eventTypes:VoucherTypeDefined') 
+            : t('events:eventTypes:VoucherMinted');
           bgColor = "bg-rose-100 text-rose-800 hover:bg-rose-200"; // 红色背景（管理事件）
           break;
         case "VoucherUsed":
         case "VoucherClaimed":
-          displayName = name === "VoucherUsed" ? "代金券使用" : "代金券认领";
+          displayName = name === "VoucherUsed" 
+            ? t('events:eventTypes:VoucherUsed') 
+            : t('events:eventTypes:VoucherClaimed');
           bgColor = "bg-green-100 text-green-800 hover:bg-green-200"; // 绿色背景（消费事件）
           break;
       }
     }
     // 其他所有事件
     else {
-      category = "其他";
+      category = t('events:categories:other');
       displayName = name;
     }
 
@@ -134,16 +144,21 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
   };
 
   // 固定的分类列表
-  const FIXED_CATEGORIES = ["全部", "商户认证", "代金券", "其他"];
+  const FIXED_CATEGORIES = [
+    t('events:categories:all'),
+    t('events:categories:merchant'),
+    t('events:categories:voucher'),
+    t('events:categories:other')
+  ];
 
   // 过滤事件
-  const filteredEvents = activeTab === "全部" 
+  const filteredEvents = activeTab === t('events:categories:all')
     ? events 
     : events.filter(event => getEventInfo(event).category === activeTab);
 
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-semibold mb-8">事件记录</h2>
+      <h2 className="text-2xl font-semibold mb-8">{t('events:title')}</h2>
 
       <div className="card">
         <div className="card-header">
@@ -168,7 +183,7 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
               disabled={isFetching}
               className="btn btn-secondary btn-sm"
             >
-              {isFetching ? '加载中...' : '刷新事件'}
+              {isFetching ? t('events:messages:processing') : t('events:messages:refresh')}
             </button>
           </div>
         </div>
@@ -182,7 +197,7 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
             
             {!isFetching && filteredEvents.length === 0 ? (
               <div className="bg-gray-50 rounded-lg p-8 text-center">
-                <p className="text-gray-600">没有找到事件记录</p>
+                <p className="text-gray-600">{t('events:messages:noEvents')}</p>
               </div>
             ) : (
               <div className="space-y-4 divide-y divide-gray-100">
@@ -217,10 +232,10 @@ const VoucherEvents: React.FC<VoucherEventsProps> = ({ txReceipt }) => {
                         </div>
                         <div className="mt-2 pt-2 border-t border-gray-100">
                           <p className="text-xs text-gray-500">
-                            合约: <span className="font-mono">{event.event.contract.address}</span>
+                            {t('events:fields:contract')}: <span className="font-mono">{event.event.contract.address}</span>
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            交易: <a 
+                            {t('events:fields:transaction')}: <a 
                               href={`https://explorer.celo.org/mainnet/tx/${event.transaction.txHash}`}
                               target="_blank"
                               rel="noopener noreferrer"

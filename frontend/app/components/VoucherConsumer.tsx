@@ -35,6 +35,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   const { voucher, merchant } = useMultiBaas();
   const { address, isConnected } = useAccount();
   const { sendTransactionAsync } = useSendTransaction();
+  const { t } = useTranslation();
   
   const [userVouchers, setUserVouchers] = useState<UserVoucher[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -269,7 +270,6 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   const getVoucherTypeInfo = (tokenId: number) => {
     return voucherTypes.find(type => type.tokenId === tokenId);
   };
-  const { t } = useTranslation();
   
   // 修改初始加载的 useEffect
   useEffect(() => {
@@ -289,11 +289,11 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
   
   return (
     <div className="container mx-auto px-4 py-6">
-      <h2 className="text-2xl font-semibold mb-8">{t("consumer:title")}</h2>
+      <h2 className="text-2xl font-semibold mb-8">{t('consumer:title')}</h2>
       
       {!isConnected ? (
         <div className="bg-gray-50 rounded-lg p-8 text-center shadow-sm">
-          <p className="text-gray-600 mb-4">{t("consumer:messages:connectWallet")}</p>
+          <p className="text-gray-600 mb-4">{t('consumer:messages:connectWallet')}</p>
         </div>
       ) : (
         <div className="flex flex-row space-x-4">
@@ -301,13 +301,13 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
           <div className="w-1/2">
             <div className="card mb-8" style={{ height: 'calc(100vh - 150px)', overflow: 'auto' }}>
               <div className="card-header flex justify-between items-center">
-                <h3 className="text-lg font-medium">{t("consumer:claimVoucher:title")}</h3>
+                <h3 className="text-lg font-medium">{t('consumer:claimVoucher:title')}</h3>
                 <button 
                   onClick={loadClaimableVouchers} 
                   disabled={isLoading}
                   className="btn btn-secondary btn-sm"
                 >
-                  {t("consumer:actions:refresh")}
+                  {t('consumer:claimVoucher:actions:refresh')}
                 </button>
               </div>
               <div className="card-body">
@@ -317,17 +317,17 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
                   </div>
                 ) : claimableVouchers.length === 0 ? (
                   <div className="bg-gray-50 rounded-lg p-8 text-center">
-                    <p className="text-gray-600">当前没有可认领的代金券</p>
+                    <p className="text-gray-600">{t('consumer:messages:noVouchers')}</p>
                   </div>
                 ) : (
                   <div>
                     <table className="min-w-full">
                       <thead>
                         <tr>
-                          <th className="py-3">Token ID</th>
-                          <th className="py-3">可认领数量(wei)</th>
-                          <th className="py-3">剩余总量(wei)</th>
-                          <th className="py-3">操作</th>
+                          <th className="py-3">{t('consumer:claimVoucher:columns:tokenId')}</th>
+                          <th className="py-3">{t('consumer:claimVoucher:columns:claimLimit')}</th>
+                          <th className="py-3">{t('consumer:claimVoucher:columns:availableAmount')}</th>
+                          <th className="py-3">{t('consumer:claimVoucher:columns:actions')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -352,7 +352,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
                                   disabled={isLoading || isTxProcessing}
                                   className="btn btn-primary btn-sm"
                                 >
-                                  认领
+                                  {t('consumer:claimVoucher:actions:claim')}
                                 </button>
                               </td>
                             </tr>
@@ -370,13 +370,13 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
           <div className="w-1/2">
             <div className="card mb-8" style={{ height: 'calc(100vh - 150px)', overflow: 'auto' }}>
               <div className="card-header flex justify-between items-center">
-                <h3 className="text-lg font-medium">我的代金券</h3>
+                <h3 className="text-lg font-medium">{t('consumer:myVouchers:title')}</h3>
                 <button 
                   onClick={loadUserVouchers} 
                   disabled={isLoading}
                   className="btn btn-secondary btn-sm"
                 >
-                  刷新列表
+                  {t('consumer:myVouchers:actions:refresh')}
                 </button>
               </div>
               <div className="card-body">
@@ -386,17 +386,17 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
                   </div>
                 ) : userVouchers.length === 0 ? (
                   <div className="bg-gray-50 rounded-lg p-4 text-center">
-                    <p className="text-gray-600">没有找到代金券</p>
+                    <p className="text-gray-600">{t('consumer:messages:noVouchers')}</p>
                   </div>
                 ) : (
                   <div>
                     <table className="min-w-full">
                       <thead>
                         <tr>
-                          <th className="py-3">Token ID</th>
-                          <th className="py-3">余额(wei)</th>
-                          <th className="py-3">已使用次数</th>
-                          <th className="py-3">操作</th>
+                          <th className="py-3">{t('consumer:myVouchers:columns:tokenId')}</th>
+                          <th className="py-3">{t('consumer:myVouchers:columns:balance')}</th>
+                          <th className="py-3">{t('consumer:myVouchers:columns:usedCount')}</th>
+                          <th className="py-3">{t('consumer:myVouchers:columns:actions')}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -420,7 +420,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
                                   onClick={() => openUseVoucherModal(voucher.tokenId)}
                                   className="btn btn-primary btn-sm"
                                 >
-                                  使用代金券
+                                  {t('consumer:myVouchers:actions:use')}
                                 </button>
                               </td>
                             </tr>
@@ -441,7 +441,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
         <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex items-center justify-center z-50">
           <div className="bg-white p-5 rounded-lg shadow-lg w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-semibold">使用代金券</h3>
+              <h3 className="text-xl font-semibold">{t('consumer:useVoucher:title')}</h3>
               <button 
                 onClick={closeUseVoucherModal}
                 className="text-gray-500 hover:text-gray-700"
@@ -453,7 +453,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  代金券类型ID
+                  {t('consumer:useVoucher:tokenId')}
                 </label>
                 <input 
                   type="number" 
@@ -464,7 +464,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  使用金额(wei)
+                  {t('consumer:useVoucher:amount')}
                 </label>
                 <input 
                   type="number" 
@@ -476,7 +476,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  商户地址
+                  {t('consumer:useVoucher:merchantAddress')}
                 </label>
                 <input 
                   type="text" 
@@ -488,7 +488,7 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
-                  商户认证Token ID
+                  {t('consumer:useVoucher:merchantCertId')}
                 </label>
                 <input 
                   type="number" 
@@ -504,14 +504,14 @@ const VoucherConsumer: React.FC<VoucherConsumerProps> = ({ setTxReceipt }) => {
                   onClick={closeUseVoucherModal}
                   className="btn btn-secondary"
                 >
-                  取消
+                  {t('consumer:useVoucher:cancel')}
                 </button>
                 <button 
                   onClick={useVoucher} 
                   disabled={isLoading || isTxProcessing || !merchantAddress}
                   className="btn btn-primary"
                 >
-                  {isLoading || isTxProcessing ? "处理中..." : "确认使用"}
+                  {isLoading || isTxProcessing ? t('consumer:messages:processing') : t('consumer:useVoucher:confirm')}
                 </button>
               </div>
             </div>
